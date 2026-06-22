@@ -9,7 +9,7 @@ kubectl create ns "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
 
 helm upgrade --install "$RELEASE" "$CHART_PACKAGE" \
   --namespace "$NAMESPACE" \
-  -f values/values-airgap-template.yaml
+  -f values/values-isolated-template.yaml
 
 kubectl wait --for=condition=Ready pod -l app.kubernetes.io/instance="$RELEASE" -n "$NAMESPACE" --timeout=900s
 kubectl get pods -n "$NAMESPACE"

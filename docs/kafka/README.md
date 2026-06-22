@@ -29,8 +29,8 @@ helm upgrade milvus ./chart/milvus -n milvus \
 
 | Скрипт | Когда |
 |--------|--------|
-| `scripts/59-export-kafka-images-airgap.sh` | Нужны tar.gz Bitnami Kafka для air-gap |
-| `scripts/81-export-ldap-airgap-delivery.sh` | Собрать полный пакет переноса (доки Kafka копируются автоматически) |
+| `scripts/59-export-kafka-images.sh` | Нужны tar.gz Bitnami Kafka для изолированного контура |
+| `scripts/81-export-ldap-delivery.sh` | Собрать полный пакет переноса (доки Kafka копируются автоматически) |
 
 ## Быстрый выбор
 

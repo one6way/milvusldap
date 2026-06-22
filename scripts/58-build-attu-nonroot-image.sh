@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run from any path; build context = milvus-airgap root.
+# Run from any path; build context = milfus-main root.
 cd "$(dirname "$0")/.."
 
 IMAGE_NAME="${IMAGE_NAME:-attu-nonroot}"

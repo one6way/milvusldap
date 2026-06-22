@@ -1,4 +1,4 @@
-# Air-gap (non-root): один раз на prep-стенде, дальше без pull
+# Изолированный контур (non-root): один раз на prep-стенде, дальше без pull
 
 **Изолированный контур без интернета:** см. **[ISOLATED_CONTOUR.md](./ISOLATED_CONTOUR.md)** — полный список артефактов и запрет на `kubectl`/`helm` с сетью.
 
@@ -10,7 +10,7 @@
 ## Команды (prep, есть интернет)
 
 ```bash
-cd milvus-airgap
+cd milfus-main
 chmod +x scripts/*.sh
 
 # Собрать non-root стек + attu (pull баз только если нет локально)
@@ -20,13 +20,13 @@ chmod +x scripts/*.sh
 ./scripts/50-collect-images.sh
 
 # Опционально: полный bundle для переноса в контур
-./scripts/80-export-airgap-bundle.sh
+./scripts/80-export-delivery-bundle.sh
 ```
 
 ## В изолированном контуре / повторный kind
 
 - Загрузить образы: `docker load` из `artifacts/images/*.tar` (или `.tar.gz`), либо внутренний registry.
-- `helm upgrade --install` из `artifacts/charts/milvus-*.tgz` + `values-airgap-template.yaml` (см. `AIRGAP_INSTALL.md`) **или** на kind: `./scripts/60-load-images-kind.sh` и `./scripts/30-install-milvus-online.sh` (без обновления Helm-зависимостей).
+- `helm upgrade --install` из `artifacts/charts/milvus-*.tgz` + `values-isolated-template.yaml` (см. `ISOLATED_INSTALL.md`) **или** на kind: `./scripts/60-load-images-kind.sh` и `./scripts/30-install-milvus-online.sh` (без обновления Helm-зависимостей).
 
 ## Когда снова нужен интернет
 

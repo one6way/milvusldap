@@ -128,7 +128,7 @@ auth:
 - `authorizationEnabled: true` в Milvus;
 - известен пароль **root** Milvus;
 - egress из кластера на **LDAPS:636** (или до DC через firewall);
-- образ `milvus-ldap-sync` в registry (или `docker load` в air-gap).
+- образ `milvus-ldap-sync` в registry (или `docker load` в изолированном контуре).
 
 ### 2.3 Файлы в репозитории
 
@@ -234,7 +234,7 @@ cp manifests/ldap-sync/ldap-sync-ca.example.yaml manifests/ldap-sync/ldap-sync-c
 # вставить PEM CA в data.ca.crt
 ```
 
-### 4.4 Собрать образ sync (prep / air-gap)
+### 4.4 Собрать образ sync (prep / изолированный контур)
 
 **Prep (с интернетом):**
 
@@ -244,7 +244,7 @@ docker build -t milvus-ldap-sync:2.5.0 -f docker/milvus-ldap-sync/Dockerfile .
 docker save milvus-ldap-sync:2.5.0 | gzip > milvus-ldap-sync-2.5.0.tar.gz
 ```
 
-**Air-gap:**
+**Изолированный контур:**
 
 ```bash
 gunzip -c milvus-ldap-sync-2.5.0.tar.gz | docker load
@@ -450,7 +450,7 @@ flowchart LR
 | Сложность | Низкая | Высокая |
 | Envoy обязателен | Нет | Да |
 | Granular RBAC в Milvus | Да | Да (с доп. sync) |
-| Air-gap | CronJob + образ | + Keycloak + JWKS |
+| Изолированный контур | CronJob + образ | + Keycloak + JWKS |
 
 ---
 

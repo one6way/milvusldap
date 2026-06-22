@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Только когда нужно обновить subchart'ы Milvus с репозиториев (интернет).
-# В air-gap и для повседневной работы НЕ вызывать — в chart/milvus/charts/ уже vendored-копии.
+# В offline и для повседневной работы НЕ вызывать — в chart/milvus/charts/ уже vendored-копии.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Один раз на prep-стенде (с интернетом): базовые образы pull только если их нет локально,
-# затем сборка всего non-root стека для values-kind-localpath.yaml / air-gap.
+# затем сборка всего non-root стека для values-kind-localpath.yaml / offline.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

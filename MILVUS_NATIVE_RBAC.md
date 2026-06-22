@@ -34,7 +34,7 @@ export MILVUS_ADMIN_PASSWORD='user1234'
 
 1. Обновить релиз Helm (подтянуть изменения `values-kind-localpath.yaml` с `extraConfigFiles`).
 2. Дождаться перезапуска подов Milvus и готовности proxy.
-3. Выполнить (из каталога `milvus-airgap`, при необходимости выставить `NAMESPACE`):
+3. Выполнить (из каталога `milfus-main`, при необходимости выставить `NAMESPACE`):
    ```bash
    chmod +x scripts/45-bootstrap-milvus-native-rbac.sh
    ./scripts/45-bootstrap-milvus-native-rbac.sh
@@ -57,7 +57,7 @@ connections.connect(
 
 С включённым RBAC без учётных данных подключение к gRPC будет отклонено.
 
-## Прод и air-gap
+## Прод и offline
 
 - Не храните пароли в открытом виде в Git: вынесите в **Secret** и подставляйте через CI/CD или `helm --set-file` / внешние values.
 - Скрипт bootstrap использует образ `python:3.11-slim` и `pip install pymilvus` — на изолированном контуре нужен **внутренний registry** и заранее собранный образ с установленным `pymilvus`, либо offline wheel.

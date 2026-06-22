@@ -1,4 +1,4 @@
-# Milvus: First-Time Installation Guide (Kubernetes + VM, Air-Gap)
+# Milvus: First-Time Installation Guide (Kubernetes + VM, Offline)
 
 Этот документ рассчитан на установку **с нуля**, как для команды, которая делает это впервые.
 
@@ -89,7 +89,7 @@ kubectl -n milvus create secret docker-registry internal-registry-secret \
 - `values-external-minio-etcd-with-internal-pulsar.yaml`  
   Внешний MinIO, встроенный etcd и встроенный Pulsar.
 
-- `values-airgap-template.yaml`  
+- `values-isolated-template.yaml`  
   Шаблон под прод-адаптацию.
 
 ## 2.3 Установка

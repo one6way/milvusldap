@@ -123,7 +123,7 @@ Kafka/Pulsar хранит **WAL** (insert/delete, time-tick) до потребл
 |----------|----------------------|---------------|
 | Кто админит Kafka | Вы / платформа K8s | Команда Kafka / DBA |
 | Сложность | +Zookeeper, +PVC ~300Gi×brokers | Только values `externalKafka` |
-| Air-gap | Нужны образы kafka + zookeeper в registry | Только Milvus ходит наружу по сети |
+| Изолированный контур | Нужны образы kafka + zookeeper в registry | Только Milvus ходит наружу по сети |
 | **Рекомендация enterprise** | Lab / MVP | **Prod** |
 
 Дальше шаги общие; различия в **фазе 5**.
@@ -477,7 +477,7 @@ kubectl -n milvus create job milvus-ldap-sync-manual --from=cronjob/milvus-ldap-
 
 ---
 
-## 11. Риски в air-gap контуре
+## 11. Риски в изолированном контуре
 
 - **What:** смена MQ Pulsar → Kafka через Helm + maintenance window.
 - **Why:** корпоративный стандарт / отказ от Pulsar.

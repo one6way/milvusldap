@@ -1,4 +1,4 @@
-# Attu (веб-UI для Milvus) в `milvus-airgap`
+# Attu (веб-UI для Milvus) в `milfus-main`
 
 [Attu](https://github.com/zilliztech/attu) — отдельное приложение для управления Milvus 2.x. В этом репозитории:
 
@@ -12,7 +12,7 @@
 
 ## Сборка образа (prep-стенд, есть интернет)
 
-Из каталога `milvus-airgap`:
+Из каталога `milfus-main`:
 
 ```bash
 chmod +x scripts/58-build-attu-nonroot-image.sh
@@ -131,7 +131,7 @@ chmod +x scripts/41-verify-attu-prereqs.sh
 
 Если Attu открывается, но «не подключается к серверу», сначала убедитесь, что **Milvus proxy в Ready** (`kubectl get pods -n milvus -l component=proxy`) и что Pulsar/ZK живы — без них proxy не поднимется.
 
-## Air-gap
+## Изолированный контур
 
 1. На prep: `docker save attu-nonroot:2.5.10 | gzip > attu-nonroot-2.5.10.tar.gz`
 2. В контуре: загрузить в registry / `docker load`, в values указать `{{ INTERNAL_REGISTRY }}/attu-nonroot:2.5.10`.

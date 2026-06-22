@@ -1,6 +1,6 @@
 # Milvus + LDAP — с чего начать
 
-Единая точка входа. Всё для развёртывания, тестирования и переноса в air-gap **внутри этого каталога** (`milfus-main/`).
+Единая точка входа. Всё для развёртывания, тестирования и переноса в изолированный контур **внутри этого каталога** (`milfus-main/`).
 
 ---
 
@@ -14,8 +14,8 @@
 | **Протокол тестирования** | [LDAP_MILVUS_TEST_PROTOCOL.md](LDAP_MILVUS_TEST_PROTOCOL.md) | Матрица проверок, логи, команды |
 | **Обоснование требований** | [IB_TZ_COMPLIANCE_ARGUMENTATION.md](IB_TZ_COMPLIANCE_ARGUMENTATION.md) | Для согласования с заказчиком |
 | **Собрать образы LDAP** | `scripts/57-build-ldap-images-nonroot.sh` | Dockerfiles в `docker/` |
-| **Собрать стек Milvus** | [AIRGAP_PREP_NONROOT_ONCE.md](AIRGAP_PREP_NONROOT_ONCE.md) | `scripts/53-build-all-nonroot-images.sh` |
-| **Air-gap установка Milvus** | [AIRGAP_INSTALL.md](AIRGAP_INSTALL.md) | `scripts/70-install-milvus-airgap.sh` |
+| **Собрать стек Milvus** | [PREP_NONROOT_ONCE.md](PREP_NONROOT_ONCE.md) | `scripts/53-build-all-nonroot-images.sh` |
+| **Установка Milvus в изолированном контуре** | [ISOLATED_INSTALL.md](ISOLATED_INSTALL.md) | `scripts/70-install-milvus-isolated.sh` |
 | **Миграция Pulsar → Kafka** | [docs/kafka/README.md](docs/kafka/README.md) | maintenance window + helm upgrade |
 | **Kafka: registry vs tar.gz** | [docs/kafka/IMAGES_AND_REGISTRY.md](docs/kafka/IMAGES_AND_REGISTRY.md) | корп. Kafka / internal registry |
 
@@ -72,7 +72,7 @@ milfus-main/
 | Назначение | Каталог | Сборка |
 |------------|---------|--------|
 | **LDAP sidecar** | `artifacts/images/` | `./scripts/57-build-ldap-images-nonroot.sh` |
-| **Milvus стек** (etcd, minio, milvus-nonroot, …) | `milvus-delivery/k8s/images/` (вне этого репо) или локально после `scripts/56-build-nonroot-deps-and-export.sh` | см. [AIRGAP_PREP_NONROOT_ONCE.md](AIRGAP_PREP_NONROOT_ONCE.md) |
+| **Milvus стек** (etcd, minio, milvus-nonroot, …) | `milvus-delivery/k8s/images/` (вне этого репо) или локально после `scripts/56-build-nonroot-deps-and-export.sh` | см. [PREP_NONROOT_ONCE.md](PREP_NONROOT_ONCE.md) |
 
 `artifacts/` в `.gitignore` — образы не пушатся в Git, только Dockerfile и скрипты сборки.
 
@@ -102,7 +102,7 @@ VALUES_FILE=values/values-ldap-auth-gateway-prod.yaml ./scripts/48-install-ldap-
 
 ## Полный README стека Milvus
 
-Общая документация (Helm, Attu, air-gap, Keycloak): [README.md](README.md)
+Общая документация (Helm, Attu, изолированный контур, Keycloak): [README.md](README.md)
 
 ## Git-репозиторий
 
@@ -112,10 +112,10 @@ VALUES_FILE=values/values-ldap-auth-gateway-prod.yaml ./scripts/48-install-ldap-
 
 ## Пакет для закрытого контура (исходники + образы)
 
-Собрать одной командой (рядом с `milfus-main/` появится каталог `milvus-ldap-airgap-delivery/`):
+Собрать одной командой (рядом с `milfus-main/` появится каталог `milvus-ldap-delivery/`):
 
 ```bash
-./scripts/81-export-ldap-airgap-delivery.sh
+./scripts/81-export-ldap-delivery.sh
 ```
 
 | В пакете | Содержание |
@@ -130,6 +130,6 @@ VALUES_FILE=values/values-ldap-auth-gateway-prod.yaml ./scripts/48-install-ldap-
 Упаковать для переноса:
 
 ```bash
-tar -czf milvus-ldap-airgap-delivery.tar.gz -C .. milvus-ldap-airgap-delivery
+tar -czf milvus-ldap-delivery.tar.gz -C .. milvus-ldap-delivery
 ```
 

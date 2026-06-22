@@ -74,5 +74,5 @@ kubectl -n default run init-netcheck \
 ## Notes
 
 - `nc` is OpenBSD netcat (`/usr/bin/nc`).
-- For air-gapped clusters, preload the image on every node or mirror it to `{{ INTERNAL_REGISTRY }}`.
+- For offline clusters, preload the image on every node or mirror it to `{{ INTERNAL_REGISTRY }}`.
 - Prefer fixed version tags in production manifests; keep `latest` for quick local smoke checks.

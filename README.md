@@ -1,4 +1,4 @@
-# Milvus в Kubernetes (air-gap ready)
+# Milvus в Kubernetes (изолированный контур)
 
 Репозиторий — **готовый контур** для развёртывания **Milvus 2.5.x** в **distributed**-режиме (Helm), сценариев **kind** / **прод-пилота**, **non-root** образов и переноса в **изолированный контур** без интернета.
 
@@ -16,7 +16,7 @@
 | [Helm и values](#helm-и-values) | Чарт, профили values |
 | [Скрипты](#скрипты) | Нумерованные `scripts/*.sh` |
 | [Образы Docker](#образы-docker) | `images/*/Dockerfile` |
-| [Air-gap и Git](#air-gap-и-git) | Перенос, приватный репозиторий |
+| [Изолированный контур и Git](#изолированный-контур-и-git) | Перенос, приватный репозиторий |
 | [Снятие стенда](#снятие-стенда) | Helm / namespace / kind |
 | [Известные фиксы](#известные-фиксы) | Pulsar bookie, версия chart |
 
@@ -34,8 +34,8 @@
 |------|------------|
 | [`chart/milvus/`](chart/milvus/) | Vendored Helm-чарт Milvus (subchart’ы внутри; см. [README чарта](chart/milvus/README.md)) |
 | [`chart/attu/`](chart/attu/) | Чарт **Attu** (веб-UI к Milvus) |
-| [`values/`](values/) | Профили установки: kind, nodeport, air-gap, MVP, Keycloak |
-| [`scripts/`](scripts/) | Создание kind, установка Milvus/Attu, сборка образов, air-gap bundle |
+| [`values/`](values/) | Профили установки: kind, nodeport, изолированный контур, MVP, Keycloak |
+| [`scripts/`](scripts/) | Создание kind, установка Milvus/Attu, сборка образов, пакет для переноса |
 | [`images/`](images/) | **Dockerfile** non-root образов ([описание](images/README.md)) |
 | [`kind/`](kind/) | Конфиг **kind** (проброс портов на localhost) |
 | [`manifests/`](manifests/) | Манифесты вспомогательные (например local-path) |
@@ -46,10 +46,10 @@
 
 ## Быстрый старт (kind)
 
-Подробнее про полный bootstrap: [AIRGAP_PREP_NONROOT_ONCE.md](AIRGAP_PREP_NONROOT_ONCE.md), [MILVUS_KIND_STACK_TEST_CHECKLIST.md](MILVUS_KIND_STACK_TEST_CHECKLIST.md).
+Подробнее про полный bootstrap: [PREP_NONROOT_ONCE.md](PREP_NONROOT_ONCE.md), [MILVUS_KIND_STACK_TEST_CHECKLIST.md](MILVUS_KIND_STACK_TEST_CHECKLIST.md).
 
 ```bash
-cd milvus-airgap
+cd milfus-main
 chmod +x scripts/*.sh
 
 ./scripts/10-create-kind-cluster.sh
@@ -70,8 +70,8 @@ Attu и «всё одним скриптом»: [ATTU.md](ATTU.md), [`scripts/90
 
 | Документ | Содержание |
 |----------|------------|
-| [AIRGAP_INSTALL.md](AIRGAP_INSTALL.md) | Установка Milvus в изолированном контуре |
-| [AIRGAP_PREP_NONROOT_ONCE.md](AIRGAP_PREP_NONROOT_ONCE.md) | Prep один раз: non-root образы, без лишнего `helm dependency update` |
+| [ISOLATED_INSTALL.md](ISOLATED_INSTALL.md) | Установка Milvus в изолированном контуре |
+| [PREP_NONROOT_ONCE.md](PREP_NONROOT_ONCE.md) | Prep один раз: non-root образы, без лишнего `helm dependency update` |
 | [ISOLATED_CONTOUR.md](ISOLATED_CONTOUR.md) | Работа без интернета: что переносить, local-path, образ kind node |
 | [FIRST_TIME_INSTALL_K8S_AND_VM.md](FIRST_TIME_INSTALL_K8S_AND_VM.md) | Первый раз: K8s и сценарий ВМ / standalone (по мере появления каталога) |
 | [EXTERNAL_DEPS_WITH_INTERNAL_PULSAR.md](EXTERNAL_DEPS_WITH_INTERNAL_PULSAR.md) | Внешние зависимости при внутреннем Pulsar |
@@ -137,7 +137,7 @@ Attu и «всё одним скриптом»: [ATTU.md](ATTU.md), [`scripts/90
 | [values/values-kind-nodeport.yaml](values/values-kind-nodeport.yaml) | NodePort Milvus |
 | [values/values-attu-kind.yaml](values/values-attu-kind.yaml) | Attu под kind |
 | [values/values-attu-nodeport.yaml](values/values-attu-nodeport.yaml) | Attu NodePort |
-| [values/values-airgap-template.yaml](values/values-airgap-template.yaml) | Шаблон air-gap (registry, pullSecrets, StorageClass) |
+| [values/values-isolated-template.yaml](values/values-isolated-template.yaml) | Шаблон для изолированного контура (registry, pullSecrets, StorageClass) |
 | [values/values-keycloak-enabled.yaml](values/values-keycloak-enabled.yaml) | Keycloak gateway |
 | [values/values-mvp-production.yaml](values/values-mvp-production.yaml) | MVP прод-пилот |
 | [values/values-mvp-production-external-s3.yaml](values/values-mvp-production-external-s3.yaml) | MVP + внешний S3/MinIO |
@@ -168,8 +168,8 @@ Attu и «всё одним скриптом»: [ATTU.md](ATTU.md), [`scripts/90
 | [`56-build-nonroot-deps-and-export.sh`](scripts/56-build-nonroot-deps-and-export.sh) | Зависимости non-root и export |
 | [`58-build-attu-nonroot-image.sh`](scripts/58-build-attu-nonroot-image.sh) | Образ Attu non-root |
 | [`60-load-images-kind.sh`](scripts/60-load-images-kind.sh) | `docker load` / загрузка в kind |
-| [`70-install-milvus-airgap.sh`](scripts/70-install-milvus-airgap.sh) | Установка из внутреннего registry |
-| [`80-export-airgap-bundle.sh`](scripts/80-export-airgap-bundle.sh) | Бандл для переноса |
+| [`70-install-milvus-isolated.sh`](scripts/70-install-milvus-isolated.sh) | Установка из внутреннего registry |
+| [`80-export-delivery-bundle.sh`](scripts/80-export-delivery-bundle.sh) | Бандл для переноса |
 | [`90-bootstrap-full-stack-kind.sh`](scripts/90-bootstrap-full-stack-kind.sh) | Полный подъём kind-стека |
 
 ---
@@ -189,10 +189,10 @@ Attu и «всё одним скриптом»: [ATTU.md](ATTU.md), [`scripts/90
 
 ---
 
-## Air-gap и Git
+## Изолированный контур и Git
 
-1. На prep: сборка / выгрузка образов — [AIRGAP_PREP_NONROOT_ONCE.md](AIRGAP_PREP_NONROOT_ONCE.md), [`scripts/53-build-all-nonroot-images.sh`](scripts/53-build-all-nonroot-images.sh), [`scripts/50-collect-images.sh`](scripts/50-collect-images.sh).  
-2. Перенос в контур без сети — [ISOLATED_CONTOUR.md](ISOLATED_CONTOUR.md), [AIRGAP_INSTALL.md](AIRGAP_INSTALL.md).  
+1. На prep: сборка / выгрузка образов — [PREP_NONROOT_ONCE.md](PREP_NONROOT_ONCE.md), [`scripts/53-build-all-nonroot-images.sh`](scripts/53-build-all-nonroot-images.sh), [`scripts/50-collect-images.sh`](scripts/50-collect-images.sh).  
+2. Перенос в контур без сети — [ISOLATED_CONTOUR.md](ISOLATED_CONTOUR.md), [ISOLATED_INSTALL.md](ISOLATED_INSTALL.md).  
 3. Каталог **`artifacts/`** в Git не входит (тяжёлые tar); в репозитории только Dockerfile. Подробности: [PRIVATE_REPO_PUSH.md](PRIVATE_REPO_PUSH.md).
 
 ---

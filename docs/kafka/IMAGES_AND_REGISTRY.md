@@ -1,4 +1,4 @@
-# Kafka для Milvus: образы, registry, air-gap
+# Kafka для Milvus: образы, registry, offline
 
 Дополнение к [MIGRATION.md](MIGRATION.md) (полная пошаговая миграция).
 
@@ -10,7 +10,7 @@
 |----------|---------------------------|----------------|
 | **A. Внешний Kafka компании** (рекомендуется prod) | **Не нужны** | `docs/kafka/values/values-external-kafka-overlay.yaml` |
 | **B. Внутренний Kafka, образы уже в registry** | **Не нужны** | `docs/kafka/values/values-kafka-internal-overlay.yaml` + правка `repository` |
-| **C. Air-gap, встроенный Bitnami Kafka** | `bitnami-kafka_*.tar.gz`, `bitnami-zookeeper_*.tar.gz` | `values-kafka-internal-overlay.yaml` |
+| **C. Offline, встроенный Bitnami Kafka** | `bitnami-kafka_*.tar.gz`, `bitnami-zookeeper_*.tar.gz` | `values-kafka-internal-overlay.yaml` |
 
 ---
 
@@ -107,7 +107,7 @@ image:
 
 ---
 
-## C. Air-gap: положить Kafka в пакет `images/`
+## C. Offline: положить Kafka в пакет `images/`
 
 Если **нет** готового Kafka в registry и нужен **встроенный** subchart.
 
@@ -115,7 +115,7 @@ image:
 
 ```bash
 cd source   # каталог milfus-main внутри пакета
-./scripts/59-export-kafka-images-airgap.sh
+./scripts/59-export-kafka-images.sh
 ```
 
 Или вручную (теги сверить с `chart/milvus/values.yaml` → секция `kafka:`):
@@ -135,7 +135,7 @@ docker save "$ZK_IMAGE" | gzip > bitnami-zookeeper_3.8.0-debian-10-r63.tar.gz
 ### 2. Положить в пакет
 
 ```text
-milvus-ldap-airgap-delivery/images/
+milvus-ldap-delivery/images/
   bitnami-kafka_3.1.0-debian-10-r52.tar.gz
   bitnami-zookeeper_3.8.0-debian-10-r63.tar.gz
 ```

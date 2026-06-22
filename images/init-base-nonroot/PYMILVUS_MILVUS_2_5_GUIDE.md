@@ -13,7 +13,7 @@ Source: Milvus PyMilvus v2.5.x compatibility table (`Milvus 2.5.x -> Recommended
 pip install "pymilvus==2.5.16"
 ```
 
-Air-gap preparation example:
+Offline preparation example:
 
 ```bash
 # Online prep host

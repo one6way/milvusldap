@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Набор смоук-тестов Milvus в Kubernetes + Markdown-отчёт с фрагментами вывода/логов.
-# Запуск из корня milvus-airgap: ./tests/run_milvus_test_report.sh
+# Запуск из корня milfus-main: ./tests/run_milvus_test_report.sh
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

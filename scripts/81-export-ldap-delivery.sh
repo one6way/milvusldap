@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-DELIVERY_DIR="${DELIVERY_DIR:-${ROOT}/../milvus-ldap-airgap-delivery}"
+DELIVERY_DIR="${DELIVERY_DIR:-${ROOT}/../milvus-ldap-delivery}"
 KUB_HELP="${KUB_HELP:-$(cd "$ROOT/.." && pwd)}"
 COPY_MODE="${COPY_MODE:-link}"   # link | copy
 
@@ -75,7 +75,7 @@ copy_image "milvus-ldap-sync-nonroot_2.5.0.tar.gz" \
 copy_image "milvus-ldap-auth-nonroot_2.5.0.tar.gz" \
   "${ART}/milvus-ldap-auth-nonroot_2.5.0.tar.gz" "" || true
 
-# Kafka (опционально): artifacts/images/bitnami-kafka_*.tar.gz после scripts/59-export-kafka-images-airgap.sh
+# Kafka (опционально): artifacts/images/bitnami-kafka_*.tar.gz после scripts/59-export-kafka-images.sh
 # Если Kafka в корпоративном registry — tar не нужен, см. docs/kafka/IMAGES_AND_REGISTRY.md
 for f in "${ART}"/bitnami-kafka_*.tar.gz "${ART}"/bitnami-zookeeper_*.tar.gz; do
   [[ -f "$f" ]] || continue
@@ -90,12 +90,12 @@ rsync -a --delete \
   --exclude 'images/export/' \
   --exclude 'images/ispravleno/' \
   --exclude 'images/init-base-nonroot/wheels/' \
-  --exclude 'milvus-airgap-bundle*.tar.gz' \
+  --exclude 'milvus-delivery-bundle*.tar.gz' \
   "$ROOT/" "$DELIVERY_DIR/source/"
 
 echo "==> Docs"
 for f in START_HERE.md CORP_LDAP_DEPLOYMENT_CHECKLIST.md LDAP_MILVUS_TEST_PROTOCOL.md \
-  IB_TZ_COMPLIANCE_ARGUMENTATION.md AIRGAP_INSTALL.md \
+  IB_TZ_COMPLIANCE_ARGUMENTATION.md ISOLATED_INSTALL.md \
   MILVUS_PULSAR_TO_KAFKA_MIGRATION.md KAFKA_IMAGES_AND_REGISTRY.md; do
   [[ -f "$ROOT/$f" ]] && cp -p "$ROOT/$f" "$DELIVERY_DIR/"
 done
@@ -109,7 +109,7 @@ cat > "$DELIVERY_DIR/images/kafka/README.md" << 'KAFKAEOF'
 
 - **Корпоративный Kafka** → tar.gz не нужны (`docs/kafka/IMAGES_AND_REGISTRY.md`, сценарий A).
 - **Образ в internal registry** → сценарий B.
-- **tar.gz** → prep: `source/scripts/59-export-kafka-images-airgap.sh`, положить сюда, пересобрать пакет.
+- **tar.gz** → prep: `source/scripts/59-export-kafka-images.sh`, положить сюда, пересобрать пакет.
 KAFKAEOF
 
 cat > "$DELIVERY_DIR/load-images.sh" << 'LOADEOF'
@@ -126,7 +126,7 @@ LOADEOF
 chmod +x "$DELIVERY_DIR/load-images.sh"
 
 {
-  echo "# Milvus + LDAP air-gap delivery manifest"
+  echo "# Milvus + LDAP offline delivery manifest"
   echo ""
   echo "Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo ""
@@ -156,7 +156,7 @@ cat > "$DELIVERY_DIR/README.md" << EOF
 
 \`\`\`bash
 ./load-images.sh
-cd source && ./scripts/70-install-milvus-airgap.sh
+cd source && ./scripts/70-install-milvus-isolated.sh
 ./scripts/46-install-ldap-sync.sh
 ./scripts/48-install-ldap-auth-gateway.sh
 # Kafka (после maintenance window): см. docs/kafka/MIGRATION.md
@@ -171,4 +171,4 @@ echo "    images: $IMG_COUNT tar.gz, total size: $TOTAL"
 echo "    missing: $MISSING"
 echo ""
 echo "Упаковать:"
-echo "  tar -czf milvus-ldap-airgap-delivery.tar.gz -C $(dirname "$DELIVERY_DIR") $(basename "$DELIVERY_DIR")"
+echo "  tar -czf milvus-ldap-delivery.tar.gz -C $(dirname "$DELIVERY_DIR") $(basename "$DELIVERY_DIR")"

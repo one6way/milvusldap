@@ -1,6 +1,6 @@
 apiVersion: v2
 name: attu
-description: Attu web UI for Milvus (optional; non-root image compatible with milvus-airgap)
+description: Attu web UI for Milvus (optional; non-root image compatible with milfus-main)
 type: application
 version: 0.1.0
 appVersion: "v2.5.10"

@@ -1,7 +1,7 @@
 FROM milvusdb/milvus:v2.5.0
 
 # Create a non-root runtime user with fixed UID/GID=65000.
-# Keep it minimal and compatible with air-gapped image mirroring.
+# Keep it minimal and compatible with offline image mirroring.
 RUN export LD_PRELOAD=""; set -eux; \
     if getent group 65000 >/dev/null 2>&1; then \
       group_name="$(getent group 65000 | cut -d: -f1)"; \

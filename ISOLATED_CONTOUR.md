@@ -7,10 +7,10 @@
 | Артефакт | Назначение |
 |----------|------------|
 | `artifacts/images/*.tar` (и при необходимости `.tar.gz`) | `docker load` / внутренний registry + для kind: `scripts/60-load-images-kind.sh` |
-| `artifacts/charts/*.tgz` | `helm upgrade --install` (см. `AIRGAP_INSTALL.md`) |
+| `artifacts/charts/*.tgz` | `helm upgrade --install` (см. `ISOLATED_INSTALL.md`) |
 | `chart/milvus/` или только packaged `.tgz` | Уже **без** `helm dependency update` |
 | `manifests/local-path-storage.yaml` | Установка StorageClass **без** `kubectl apply -f https://...` |
-| `values/*.yaml`, `scripts/*.sh`, документация | Как в `80-export-airgap-bundle.sh` |
+| `values/*.yaml`, `scripts/*.sh`, документация | Как в `80-export-delivery-bundle.sh` |
 
 ## Образы, которые должны быть в `artifacts` (после prep)
 
@@ -24,10 +24,10 @@
 ## Установка в контуре (схема)
 
 1. Установить `kubectl`, `helm`, `docker` или `containerd`, `kind` (если используете kind) — **бинарники** переносятся отдельно (пакеты/USB).
-2. `docker load -i ...` для всех образов из `artifacts/images/` **или** загрузка в ваш registry и правки `values-airgap-template.yaml`.
+2. `docker load -i ...` для всех образов из `artifacts/images/` **или** загрузка в ваш registry и правки `values-isolated-template.yaml`.
 3. Для **kind**: после `kind create cluster` выполнить **`./scripts/60-load-images-kind.sh`** (образы должны быть загружены в Docker на хосте после `docker load`).
 4. **`./scripts/20-install-local-path-provisioner.sh`** — только локальный файл `manifests/local-path-storage.yaml` (входит в bundle).
-5. **`./scripts/70-install-milvus-airgap.sh`** (или ваш Helm-пайплайн) с **офлайн** values — **без** `helm repo add` и **без** `helm dependency update`.
+5. **`./scripts/70-install-milvus-isolated.sh`** (или ваш Helm-пайплайн) с **офлайн** values — **без** `helm repo add` и **без** `helm dependency update`.
 
 ## Образ узла kind (`kindest/node`)
 

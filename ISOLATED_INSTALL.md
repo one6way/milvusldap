@@ -1,4 +1,4 @@
-# Air-Gap Installation Guide: Milvus (Distributed)
+# Установка в изолированном контуре: Milvus (Distributed)
 
 ## 1) Цель
 
@@ -10,11 +10,11 @@
 
 ## 2) Артефакты, которые нужно подготовить на prep-стенде
 
-Из папки `milvus-airgap`:
+Из папки `milfus-main`:
 
 ```bash
 chmod +x scripts/*.sh
-# non-root образы (один раз на prep, см. AIRGAP_PREP_NONROOT_ONCE.md):
+# non-root образы (один раз на prep, см. PREP_NONROOT_ONCE.md):
 ./scripts/53-build-all-nonroot-images.sh
 ./scripts/50-collect-images.sh
 ```
@@ -34,8 +34,8 @@ chmod +x scripts/*.sh
 - `artifacts/images/*.tar` (и при наличии `*.tar.gz` для Attu)
 - `artifacts/charts/milvus-<version>.tgz`
 - `artifacts/charts/attu-0.1.0.tgz` (опционально, для UI)
-- `values/values-airgap-template.yaml`, `values/values-attu-kind.yaml` (для Attu)
-- `scripts/70-install-milvus-airgap.sh`, `scripts/31-install-attu.sh` (опционально)
+- `values/values-isolated-template.yaml`, `values/values-attu-kind.yaml` (для Attu)
+- `scripts/70-install-milvus-isolated.sh`, `scripts/31-install-attu.sh` (опционально)
 - каталог **`manifests/`** (local-path **без** обращения к GitHub в контуре)
 - документацию из корня bundle (в т.ч. **`ISOLATED_CONTOUR.md`**, **`MILVUS_COMPONENT_FAILURE_RUNBOOK.md`**)
 
@@ -61,7 +61,7 @@ docker push {{ INTERNAL_REGISTRY }}/milvusdb/milvus:v2.4.13
 
 ## 5) Настройка values для изолированного контура
 
-Откройте `values/values-airgap-template.yaml` и заполните:
+Откройте `values/values-isolated-template.yaml` и заполните:
 
 - `global.imageRegistry` = `{{ INTERNAL_REGISTRY }}`
 - `imagePullSecrets`
@@ -71,8 +71,8 @@ docker push {{ INTERNAL_REGISTRY }}/milvusdb/milvus:v2.4.13
 ## 6) Установка в изолированном контуре
 
 ```bash
-chmod +x scripts/70-install-milvus-airgap.sh
-./scripts/70-install-milvus-airgap.sh
+chmod +x scripts/70-install-milvus-isolated.sh
+./scripts/70-install-milvus-isolated.sh
 ```
 
 ## 7) Проверка
@@ -89,7 +89,7 @@ curl -sf http://127.0.0.1:9091/healthz
 - `healthz` возвращает `ok`;
 - все pod в `Running/Ready`.
 
-## 8) Опционально: Attu в air-gap
+## 8) Опционально: Attu в изолированном контуре
 
 1. Загрузить образ `attu-nonroot:2.5.10` (`docker load` из `.tar` или `.tar.gz` из `artifacts/images/`).
 2. В internal registry при необходимости перетегировать и прописать в `values/values-attu-kind.yaml`.

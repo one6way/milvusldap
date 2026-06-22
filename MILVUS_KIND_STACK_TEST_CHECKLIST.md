@@ -6,14 +6,14 @@
 
 - Запущен **Docker Desktop** (или иной daemon с `kind`).
 - Есть доступ в интернет (для `helm dependency update` и pull образов в online-сценарии).
-- Из корня `milvus-airgap`: скрипт **90** при первом запуске вызывает **53** (сборка non-root) и **50** (artifacts), дальше грузит tar в kind **без** повторного `helm dependency update`.
+- Из корня `milfus-main`: скрипт **90** при первом запуске вызывает **53** (сборка non-root) и **50** (artifacts), дальше грузит tar в kind **без** повторного `helm dependency update`.
 
 ```bash
 chmod +x scripts/*.sh
 ./scripts/90-bootstrap-full-stack-kind.sh
 ```
 
-См. также **`AIRGAP_PREP_NONROOT_ONCE.md`**.
+См. также **`PREP_NONROOT_ONCE.md`**.
 
 Ожидание: все pod в `milvus` в `Running`/`Ready`, Attu deployment доступен.
 

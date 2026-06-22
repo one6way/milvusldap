@@ -88,7 +88,7 @@ AD/LDAPS ──► milvus-ldap-sync (CronJob) ──► Milvus users/roles (RBAC
 | Helm | Параметры sync/auth в values + `securityContext` UID/GID **65000** |
 | Аудит/логирование | Envoy access log + structured JSON в ldap-auth/sync |
 
-Сборка и выгрузка в air-gap:
+Сборка и выгрузка в изолированном контуре:
 
 ```bash
 cd milfus-main
@@ -104,7 +104,7 @@ cd milfus-main
 1. **Единый источник истины** — AD уже проходит ИБ-аудит (GPO, lockout, история паролей).
 2. **Меньше техдолга** — не тащим форк Milvus на каждый релиз 2.5.x → 2.6.x.
 3. **Разделение ответственности** — ИБ домена = AD; доступ к векторам = Milvus RBAC.
-4. **Air-gap** — два небольших Python-образа + Envoy, без пересборки C++ Milvus.
+4. **Offline** — два небольших Python-образа + Envoy, без пересборки C++ Milvus.
 
 ## Риски и митигации
 

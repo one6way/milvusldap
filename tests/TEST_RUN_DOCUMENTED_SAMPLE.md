@@ -7,7 +7,7 @@
 Базовый прогон (T1–T8, без Python):
 
 ```bash
-cd milvus-airgap
+cd milfus-main
 ./tests/run_milvus_test_report.sh
 ```
 
@@ -15,7 +15,7 @@ cd milvus-airgap
 
 ```bash
 kubectl port-forward -n milvus svc/milvus 19530:19530   # отдельный терминал
-cd milvus-airgap
+cd milfus-main
 python3 -m venv tests/.venv
 tests/.venv/bin/pip install -r tests/requirements-tests.txt
 PATH="tests/.venv/bin:$PATH" \

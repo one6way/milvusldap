@@ -7,7 +7,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 if [[ ! -f "$ROOT/chart/milvus/Chart.yaml" ]]; then
-  echo "ERROR: ожидается chart/milvus (полный bootstrap только из каталога milvus-airgap)." >&2
+  echo "ERROR: ожидается chart/milvus (полный bootstrap только из каталога milfus-main)." >&2
   exit 1
 fi
 

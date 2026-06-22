@@ -58,7 +58,7 @@
 
 ## Helm upgrade на kind и `ImagePullBackOff`
 
-После `helm upgrade` Kubernetes может пересоздать StatefulSet/Deployment и запланировать **новые** pod’ы. Если образы с коротким именем (например `milvus-etcd-nonroot:tag`) существуют только **локально** (custom build / air-gap), kubelet попытается тянуть их как `docker.io/library/...` и получит **pull access denied**.
+После `helm upgrade` Kubernetes может пересоздать StatefulSet/Deployment и запланировать **новые** pod’ы. Если образы с коротким именем (например `milvus-etcd-nonroot:tag`) существуют только **локально** (custom build / изолированный контур), kubelet попытается тянуть их как `docker.io/library/...` и получит **pull access denied**.
 
 **Что сделать:** с хоста, где собраны образы, снова загрузить их в узел kind:
 

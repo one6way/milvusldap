@@ -20,7 +20,7 @@
 ## Запуск демо
 
 ```bash
-cd milvus-airgap
+cd milfus-main
 python3 tests/milvus_simulate_slow_queries.py
 ```
 

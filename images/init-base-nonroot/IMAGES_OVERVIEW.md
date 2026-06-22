@@ -27,7 +27,7 @@ From repo root (`/Users/one6way/Documents/kub_help`):
 # Build
 docker build -t <name>:latest -f "milfus-main/images/<dir>/Dockerfile" "milfus-main/images/<dir>"
 
-# Export (air-gap)
+# Export (offline)
 docker save <name>:latest | gzip > "milfus-main/images/export/<name>-latest.tar.gz"
 ```
 
@@ -67,7 +67,7 @@ docker run --rm --entrypoint /bin/sh <name>:latest -c 'id'
 ## Tagging recommendation
 
 - Keep `latest` for quick local checks.
-- For deployment and rollback in air-gapped environments, publish immutable tags too:
+- For deployment and rollback in offline environments, publish immutable tags too:
   - `vX.Y.Z`, or
   - `YYYYMMDD-<gitsha>`
 - In Helm/Kustomize manifests, pin immutable tags.

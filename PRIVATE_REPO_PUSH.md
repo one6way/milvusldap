@@ -1,11 +1,11 @@
 # Вынос в приватный Git (только Milvus / K8s + доки стека)
 
-Репозиторий задуман как **самостоятельный каталог** `milvus-airgap`: чарты, `values/`, `scripts/`, `images/*/Dockerfile`, документация, `tests/`, `kind/`, `chart/`, `manifests/` — **без** `kub_help` и прочих проектов.
+Репозиторий задуман как **самостоятельный каталог** `milfus-main`: чарты, `values/`, `scripts/`, `images/*/Dockerfile`, документация, `tests/`, `kind/`, `chart/`, `manifests/` — **без** `kub_help` и прочих проектов.
 
 ## Что не попадает в Git (образы)
 
 - Каталог **`artifacts/`** целиком (tar образов и прочее prep-стенда, часто гигабайты) — в репо только **Dockerfile** в `images/` (см. `images/README.md`).
-- **`milvus-airgap-bundle*.tar.gz`** в корне — локальные сборки, не коммитить.
+- **`milvus-delivery-bundle*.tar.gz`** в корне — локальные сборки, не коммитить.
 
 Helm-пакеты **`.tgz`** в `chart/` и при необходимости `artifacts/charts/` **можно** хранить (это не Docker-образы); при желании ужесточить — добавь правило в `.gitignore`.
 
@@ -16,20 +16,20 @@ Helm-пакеты **`.tgz`** в `chart/` и при необходимости `a
 
 ## Первичная заливка
 
-Из **родителя** не коммить: копируй только дерево `milvus-airgap/` в новый клон или делай `git init` **внутри** `milvus-airgap`.
+Из **родителя** не коммить: копируй только дерево `milfus-main/` в новый клон или делай `git init` **внутри** `milfus-main`.
 
 ```bash
-cd milvus-airgap
+cd milfus-main
 git init -b main
 git add .
 git status   # убедись, что нет *.tar.gz образов и bundle
-git commit -m "Milvus air-gap: charts, values, images (Dockerfile), scripts, tests, docs"
+git commit -m "Milvus offline: charts, values, images (Dockerfile), scripts, tests, docs"
 ```
 
 Добавь remote на приватный хост (GitLab / Bitbucket и т.д.):
 
 ```bash
-git remote add origin https://<host>/<group>/milvus-airgap.git
+git remote add origin https://<host>/<group>/milfus-main.git
 ```
 
 ### Токен (не светить в истории)
@@ -39,7 +39,7 @@ git remote add origin https://<host>/<group>/milvus-airgap.git
 - Временный вариант (осторожно, попадает в `~/.git-credentials` если настроено):
 
   ```bash
-  git push https://oauth2:<TOKEN>@<host>/<group>/milvus-airgap.git main
+  git push https://oauth2:<TOKEN>@<host>/<group>/milfus-main.git main
   ```
 
   После push смени токен при подозрении на утечку.
@@ -51,4 +51,4 @@ git ls-files | grep -E '\.tar\.gz$' || echo "OK: no tar.gz tracked"
 du -sh .git  # разумный размер без образов
 ```
 
-Когда будут **URL репозитория и способ аутентификации**, можно выполнить push с этой машины тем же набором файлов — **только содержимое `milvus-airgap`**, без изменений из других частей `kub_help`.
+Когда будут **URL репозитория и способ аутентификации**, можно выполнить push с этой машины тем же набором файлов — **только содержимое `milfus-main`**, без изменений из других частей `kub_help`.

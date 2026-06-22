@@ -101,7 +101,7 @@ ConcurrencyPolicy: Forbid
 
 ## 3. Реестр артефактов поставки
 
-### 3.1. Образы LDAP-sidecar (prep-стенд → air-gap)
+### 3.1. Образы LDAP-sidecar (prep-стенд → изолированный контур)
 
 Каталог: `milfus-main/artifacts/images/`
 

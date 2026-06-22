@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Экспорт образов Bitnami Kafka + Zookeeper для air-gap (встроенный subchart Milvus).
+# Экспорт образов Bitnami Kafka + Zookeeper для offline (встроенный subchart Milvus).
 # Если Kafka уже в корпоративном registry — см. docs/kafka/IMAGES_AND_REGISTRY.md (сценарий A/B).
 set -euo pipefail
 
@@ -28,5 +28,5 @@ docker save "$ZK_IMAGE" | gzip > "$ZK_TAR"
 
 ls -lh "$KAFKA_TAR" "$ZK_TAR"
 echo ""
-echo "Положите в air-gap пакет или пересоберите:"
-echo "  ./scripts/81-export-ldap-airgap-delivery.sh"
+echo "Положите в offline пакет или пересоберите:"
+echo "  ./scripts/81-export-ldap-delivery.sh"

@@ -1,4 +1,4 @@
-# Keycloak + LDAP Authentication for Milvus (Air-Gap Guide)
+# Keycloak + LDAP Authentication for Milvus (Offline Guide)
 
 Этот документ описывает, как реализовать аутентификацию для Milvus в изолированном контуре, если у вас уже есть Keycloak с LDAP federation.
 
@@ -92,7 +92,7 @@
 ## 5.4 Token Policy
 - Access token TTL (например 5-15 минут).
 - Refresh token policy по требованиям ИБ.
-- Учитывайте требования air-gap по синхронизации времени (NTP внутри контура).
+- Учитывайте требования offline по синхронизации времени (NTP внутри контура).
 
 ---
 
@@ -168,7 +168,7 @@ helm upgrade --install milvus ./chart/milvus -n milvus \
 
 ---
 
-## 8. Air-gap подготовка артефактов
+## 8. Offline подготовка артефактов
 
 Нужно заранее подготовить:
 - образы gateway, sidecar/ext-authz (если есть),
@@ -207,7 +207,7 @@ helm upgrade --install milvus ./chart/milvus -n milvus \
 - [ ] С неправильной группой доступ запрещен.
 - [ ] С нужной группой доступны только разрешенные операции.
 - [ ] Аудит-логи пишутся и индексируются.
-- [ ] Внутренний сервисный доступ к Keycloak/JWKS работает в air-gap.
+- [ ] Внутренний сервисный доступ к Keycloak/JWKS работает в изолированном контуре.
 
 ---
 

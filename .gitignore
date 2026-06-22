@@ -14,7 +14,7 @@ images/ispravleno/
 images/init-base-nonroot/wheels/
 
 # Локальные бандлы всего стека
-milvus-airgap-bundle*.tar.gz
+milvus-delivery-bundle*.tar.gz
 
 # IDE / macOS
 .idea/

@@ -156,7 +156,7 @@ sequenceDiagram
 
 ## 6. Хранилище (PVC) и образы
 
-- **Диски:** etcd, MinIO, Zookeeper Pulsar, **journal/ledgers** BookKeeper — отдельные **PVC** (в kind-профиле чаще всего **local-path**; в проде — свой StorageClass из [values-mvp-production.yaml](values-mvp-production.yaml) / air-gap шаблона).
+- **Диски:** etcd, MinIO, Zookeeper Pulsar, **journal/ledgers** BookKeeper — отдельные **PVC** (в kind-профиле чаще всего **local-path**; в проде — свой StorageClass из [values-mvp-production.yaml](values-mvp-production.yaml) / изолированный контур шаблона).
 - **Образы:** в репозитории — **Dockerfile** в [`images/`](images/README.md); в кластер попадают как `milvus-*-nonroot`, `attu-nonroot` и т.д. (см. [values-kind-localpath.yaml](values/values-kind-localpath.yaml)).
 
 ```mermaid
@@ -295,7 +295,7 @@ auth:
 
 - **Init Job** Pulsar/BookKeeper (статус `Completed`) — одноразовые; см. [MILVUS_PODS_EXPLAINED.md](MILVUS_PODS_EXPLAINED.md).
 - **Масштабирование** replicaCount по ролям — задаётся Helm values.
-- **Air-gap:** те же компоненты, но образы из внутреннего registry; см. [AIRGAP_INSTALL.md](AIRGAP_INSTALL.md).
+- **Изолированный контур:** те же компоненты, но образы из внутреннего registry; см. [ISOLATED_INSTALL.md](ISOLATED_INSTALL.md).
 
 ---
 
