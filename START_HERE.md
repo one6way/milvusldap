@@ -8,7 +8,8 @@
 
 | Задача | Документ | Действие |
 |--------|----------|----------|
-| **Понять архитектуру** | [LDAP_DOMAIN_LOGIN_ARCHITECTURE.md](LDAP_DOMAIN_LOGIN_ARCHITECTURE.md) | Схема gateway + ldap-auth + sync |
+| **Понять архитектуру** | [docs/architecture/README.md](docs/architecture/README.md) | Схемы взаимодействия и авторизации |
+| **Краткая схема LDAP** | [LDAP_DOMAIN_LOGIN_ARCHITECTURE.md](LDAP_DOMAIN_LOGIN_ARCHITECTURE.md) | gateway + ldap-auth + sync |
 | **Развернуть на lab (kind)** | [CORP_LDAP_DEPLOYMENT_CHECKLIST.md](CORP_LDAP_DEPLOYMENT_CHECKLIST.md) §4 | `./scripts/47-setup-ldap-lab.sh` → `49-setup-ldap-auth-gateway-lab.sh` |
 | **Развернуть prod (LDAPS)** | [CORP_LDAP_DEPLOYMENT_CHECKLIST.md](CORP_LDAP_DEPLOYMENT_CHECKLIST.md) §5 | values prod + `46` / `48` install scripts |
 | **Протокол тестирования** | [LDAP_MILVUS_TEST_PROTOCOL.md](LDAP_MILVUS_TEST_PROTOCOL.md) | Матрица проверок, логи, команды |
@@ -31,6 +32,13 @@ milfus-main/
 ├── IB_TZ_COMPLIANCE_ARGUMENTATION.md
 ├── LDAP_DOMAIN_LOGIN_ARCHITECTURE.md
 ├── LDAPS_RBAC_SYNC_SETUP.md
+│
+├── docs/
+│   ├── architecture/             # Подробные Mermaid-схемы
+│   │   ├── README.md
+│   │   ├── COMPONENT_INTERACTION.md
+│   │   └── AUTHORIZATION.md
+│   └── kafka/                    # Pulsar → Kafka
 │
 ├── docker/                       # Dockerfile sidecar (в Git)
 │   ├── milvus-ldap-sync/Dockerfile
@@ -57,13 +65,10 @@ milfus-main/
 │   └── values-ldap-auth-gateway.example.yaml
 │
 ├── images/                       # Dockerfile non-root Milvus/etcd/… (в Git)
-├── chart/                        # Helm chart Milvus
-└── docs/kafka/                   # Pulsar → Kafka (без образов в Git)
-    ├── README.md
-    ├── MIGRATION.md
-    ├── IMAGES_AND_REGISTRY.md
-    └── values/                   # Helm overlays
+└── chart/                        # Helm chart Milvus
 ```
+
+Полные архитектурные схемы: [docs/architecture/](docs/architecture/README.md)
 
 ---
 

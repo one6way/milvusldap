@@ -100,6 +100,7 @@ for f in START_HERE.md CORP_LDAP_DEPLOYMENT_CHECKLIST.md LDAP_MILVUS_TEST_PROTOC
   [[ -f "$ROOT/$f" ]] && cp -p "$ROOT/$f" "$DELIVERY_DIR/"
 done
 rsync -a "$ROOT/docs/kafka/" "$DELIVERY_DIR/docs/kafka/"
+rsync -a "$ROOT/docs/architecture/" "$DELIVERY_DIR/docs/architecture/"
 
 mkdir -p "$DELIVERY_DIR/images/kafka"
 cat > "$DELIVERY_DIR/images/kafka/README.md" << 'KAFKAEOF'
@@ -153,6 +154,7 @@ cat > "$DELIVERY_DIR/README.md" << EOF
 | \`MANIFEST.md\` | Checksums |
 | \`START_HERE.md\` | Навигация |
 | \`docs/kafka/\` | Миграция Pulsar → Kafka (без образов) |
+| \`docs/architecture/\` | Схемы взаимодействия и авторизации |
 
 \`\`\`bash
 ./load-images.sh

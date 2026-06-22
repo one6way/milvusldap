@@ -1,5 +1,7 @@
 # Доменный логин в Milvus / Attu (LDAP + Envoy)
 
+> **Подробные схемы:** [docs/architecture/COMPONENT_INTERACTION.md](docs/architecture/COMPONENT_INTERACTION.md) (взаимодействие) · [docs/architecture/AUTHORIZATION.md](docs/architecture/AUTHORIZATION.md) (авторизация)
+
 Цель: пользователь вводит **доменный логин и пароль** (`test514512` + пароль AD), права — из **AD-групп** через RBAC sync.
 
 **Сейчас в kind-кластере:** Envoy **не развёрнут** (`auth.keycloak.enabled: false`). Образ есть: `images/envoy-nonroot` → `envoy-nonroot:v1.31.2`.

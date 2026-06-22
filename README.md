@@ -70,6 +70,7 @@ Attu и «всё одним скриптом»: [ATTU.md](ATTU.md), [`scripts/90
 
 | Документ | Содержание |
 |----------|------------|
+| [docs/architecture/README.md](docs/architecture/README.md) | **Архитектура LDAP:** взаимодействие и авторизация (Mermaid) |
 | [ISOLATED_INSTALL.md](ISOLATED_INSTALL.md) | Установка Milvus в изолированном контуре |
 | [PREP_NONROOT_ONCE.md](PREP_NONROOT_ONCE.md) | Prep один раз: non-root образы, без лишнего `helm dependency update` |
 | [ISOLATED_CONTOUR.md](ISOLATED_CONTOUR.md) | Работа без интернета: что переносить, local-path, образ kind node |
