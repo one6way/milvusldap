@@ -1,0 +1,124 @@
+cluster:
+  enabled: true
+
+standalone:
+  enabled: false
+
+global:
+  imageRegistry: "nexus.cloud.reg.ru"
+  imagePullPolicy: Present
+  imagePullSecrets:
+    - internal-registry-secret
+
+image:
+  all:
+    repository: milvus-nonroot
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+
+etcd:
+  image:
+    repository: "ndp-docker-test.nexus-cd.ru/milvus/milvus-etcd-nonroot"
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: "{{ STORAGE_CLASS }}"
+    size: 8Gi
+
+minio:
+  image:
+    repository: "ndp-docker-lib.nexus-cd.int.ru/milvus/milvus-minio-nonroot"
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  mode: standalone
+  replicas: 1
+  persistence:
+    enabled: true
+    storageClass: "nfs"
+    size: 20Gi
+
+pulsarv3:
+  enabled: true
+  images:
+    zookeeper:
+      repository: "ndp-docker-lib.nexus-ci.int.cloud.ru"
+      tag: "latest"
+      pullPolicy: IfNotPresent
+    bookie:
+      repository: "ndp-docker-lib.nexus-ci.int.cloud.ru"
+      tag: "latest"
+      pullPolicy: IfNotPresent
+    autorecovery:
+      repository: "ndp-docker-lib.nexus-ci.int.cloud.ru"
+      tag: "latest"
+      pullPolicy: IfNotPresent
+    broker:
+      repository: "ndp-docker-lib.nexus-cd.int.cloud.ru"
+      tag: "latest"
+      pullPolicy: IfNotPresent
+    proxy:
+      repository: "{{ INTERNAL_REGISTRY }}/milvus/milvus-pulsar-nonroot"
+      tag: "latest"
+      pullPolicy: IfNotPresent
+  zookeeper:
+    replicaCount: 1
+  bookkeeper:
+    replicaCount: 3
+  broker:
+    replicaCount: 1
+  autorecovery:
+    replicaCount: 1
+  proxy:
+    replicaCount: 1
+
+proxy:
+  replicas: 1
+rootCoord:
+  replicas: 1
+queryCoord:
+  replicas: 1
+dataCoord:
+  replicas: 1
+indexCoord:
+  replicas: 1
+queryNode:
+  replicas: 1
+dataNode:
+  replicas: 1
+indexNode:
+  replicas: 1
+
+auth:
+  keycloak:
+    enabled: false
+    mode: gateway
+    gateway:
+      image:
+        repository: "ndp-docker-test.nexus-cd.cloud.ru"
+        tag: "latest"
+        pullPolicy: IfNotPresent
+      replicas: 1
+      service:
+        type: ClusterIP
+        port: 19530
+      resources: {}
+    oidc:
+      issuer: "https://keycloak.int.bz.ru/realms/realmid"
+      audience: "{{ MILVUS_CLIENT_ID }}"
+      jwksUri: "https://keycloak.int.bz.ru/realms/realmid/protocol/openid-connect/certs"
+      jwksHost: "host.cloud.cl.ru"
+      jwksPort: 443

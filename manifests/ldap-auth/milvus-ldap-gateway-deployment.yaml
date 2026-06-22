@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: milvus-ldap-gateway
+  namespace: milvus
+  labels:
+    app.kubernetes.io/name: milvus-ldap-gateway
+    app.kubernetes.io/component: ldap-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: milvus-ldap-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: milvus-ldap-gateway
+        app.kubernetes.io/component: ldap-gateway
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65000
+        runAsGroup: 65000
+        fsGroup: 65000
+      containers:
+        - name: envoy
+          image: envoy-nonroot:v1.31.2
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-c"
+            - "/etc/envoy/envoy.yaml"
+            - "--log-level"
+            - "info"
+          ports:
+            - name: grpc
+              containerPort: 19530
+          volumeMounts:
+            - name: envoy-config
+              mountPath: /etc/envoy
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 65000
+            runAsGroup: 65000
+      volumes:
+        - name: envoy-config
+          configMap:
+            name: milvus-ldap-gateway-envoy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: milvus-ldap-gateway
+  namespace: milvus
+  labels:
+    app.kubernetes.io/name: milvus-ldap-gateway
+spec:
+  selector:
+    app.kubernetes.io/name: milvus-ldap-gateway
+  ports:
+    - name: grpc
+      port: 19530
+      targetPort: 19530

@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: milvus-ldap-sync
+  namespace: milvus
+  labels:
+    app.kubernetes.io/name: milvus-ldap-sync
+    app.kubernetes.io/component: ldap-sync
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: milvus-ldap-sync
+            app.kubernetes.io/component: ldap-sync
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65000
+            runAsGroup: 65000
+            fsGroup: 65000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: sync
+              image: milvus-ldap-sync-nonroot:2.5.0
+              imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              envFrom:
+                - configMapRef:
+                    name: milvus-ldap-sync-config
+                - secretRef:
+                    name: milvus-ldap-sync
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+                - name: ldap-ca
+                  mountPath: /etc/ldap
+                  readOnly: true
+          volumes:
+            - name: tmp
+              emptyDir: {}
+            - name: ldap-ca
+              configMap:
+                name: milvus-ldap-sync-ca

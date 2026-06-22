@@ -1,0 +1,22 @@
+# NodePort: доступ к Milvus с ноды без port-forward и без Ingress.
+# Дальше в облаке обычно меняют только service.type: LoadBalancer (часто те же port / targetPort).
+#
+# Установка / апгрейд (после базового профиля):
+#   helm upgrade --install milvus chart/milvus -n milvus \
+#     -f values/values-kind-localpath.yaml -f values/values-kind-nodeport.yaml
+#
+# macOS + Docker Desktop: без kind extraPortMappings NodePort НЕ слушает на 127.0.0.1.
+# Создавайте кластер: kind create cluster --config kind/kind-config-milvus-local.yaml
+# (см. scripts/10-create-kind-cluster.sh) или используйте kubectl port-forward.
+#
+# Снаружи при пробросе портов kind:
+#   grpc:   <node-ip>:30530
+#   webui:  http://<node-ip>:30531/webui
+#   health: http://<node-ip>:30531/healthz
+#
+# Оставьте nodePort / metricsNodePort пустыми строками "", чтобы Kubernetes назначил порты сам.
+
+service:
+  type: NodePort
+  nodePort: 30530
+  metricsNodePort: 30531

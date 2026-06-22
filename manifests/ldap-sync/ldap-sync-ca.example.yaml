@@ -1,0 +1,11 @@
+# Copy to ldap-sync-ca.yaml with your LDAPS CA certificate.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: milvus-ldap-sync-ca
+  namespace: milvus
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    {{ PASTE_LDAPS_CA_PEM }}
+    -----END CERTIFICATE-----

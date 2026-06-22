@@ -1,0 +1,207 @@
+cluster:
+  enabled: true
+
+standalone:
+  enabled: false
+
+global:
+  imagePullPolicy: IfNotPresent
+
+image:
+  all:
+    repository: milvus-nonroot
+    tag: "2.5.0"
+    pullPolicy: IfNotPresent
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65000
+  runAsGroup: 65000
+  fsGroup: 65000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65000
+  runAsGroup: 65000
+  allowPrivilegeEscalation: false
+
+etcd:
+  image:
+    repository: milvus-etcd-nonroot
+    tag: "3.5.16-r1"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+minio:
+  image:
+    repository: milvus-minio-nonroot
+    tag: "RELEASE.2023-03-20T20-16-18Z"
+    pullPolicy: IfNotPresent
+  mode: standalone
+  replicas: 1
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 20Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+pulsarv3:
+  enabled: true
+  images:
+    zookeeper:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    bookie:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    autorecovery:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    broker:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    proxy:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+  zookeeper:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  bookkeeper:
+    replicaCount: 3
+    resources:
+      requests:
+        cpu: 80m
+        memory: 192Mi
+  broker:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  autorecovery:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+  proxy:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+proxy:
+  # -1 => chart will not render spec.replicas, so HPA can control scaling.
+  replicas: -1
+  http:
+    enabled: true
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+rootCoord:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+queryCoord:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+dataCoord:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+indexCoord:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+queryNode:
+  # -1 => chart will not render spec.replicas, so HPA can control scaling.
+  replicas: -1
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+dataNode:
+  # -1 => chart will not render spec.replicas, so HPA can control scaling.
+  replicas: -1
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+indexNode:
+  # -1 => chart will not render spec.replicas, so HPA can control scaling.
+  replicas: -1
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+auth:
+  keycloak:
+    enabled: false
+    mode: gateway
+    gateway:
+      image:
+        repository: envoyproxy/envoy
+        tag: v1.31.2
+        pullPolicy: IfNotPresent
+      replicas: 1
+      service:
+        type: ClusterIP
+        port: 19530
+      resources: {}
+    oidc:
+      issuer: "https://{{ KEYCLOAK_HOST }}/realms/{{ REALM }}"
+      audience: "{{ MILVUS_CLIENT_ID }}"
+      jwksUri: "https://{{ KEYCLOAK_HOST }}/realms/{{ REALM }}/protocol/openid-connect/certs"
+      jwksHost: "{{ KEYCLOAK_HOST }}"
+      jwksPort: 443
+
+# Встроенный RBAC Milvus: root/user + пользователь admin (создаётся scripts/45-bootstrap-milvus-native-rbac.sh).
+# См. MILVUS_NATIVE_RBAC.md
+extraConfigFiles:
+  user.yaml: |
+    common:
+      security:
+        authorizationEnabled: true
+        defaultRootPassword: "user"
+        superUsers: root,admin
+    # Web UI «Slow Requests»: дефолт Milvus ~секунды — мелкие search не попадают. Для kind-демо порог 15 ms (после helm upgrade).
+    proxy:
+      slowQuerySpanInSeconds: 0.015

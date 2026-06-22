@@ -1,0 +1,58 @@
+# Milvus REST API Ingress (порт 19530, HTTP).
+# Пути: /v2/vectordb/* (v2), /v1/* (legacy). Источник: milvus v2.5.0 service.go.
+# Инструкция: ingress/README.md
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milvus-rest
+  namespace: {{ NAMESPACE }}
+  labels:
+    app.kubernetes.io/name: milvus
+    app.kubernetes.io/component: rest
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/proxy-body-size: "2048m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+spec:
+  ingressClassName: {{ INGRESS_CLASS }}
+  # tls:
+  #   - hosts:
+  #       - {{ MILVUS_REST_HOST }}
+  #     secretName: {{ TLS_SECRET_NAME_REST }}
+  rules:
+    - host: {{ MILVUS_REST_HOST }}
+      http:
+        paths:
+          - path: /v2/vectordb
+            pathType: Prefix
+            backend:
+              service:
+                name: milvus
+                port:
+                  number: 19530
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: milvus
+                port:
+                  number: 19530
+    # Доступ по IP без DNS:
+    # - http:
+    #     paths:
+    #       - path: /v2/vectordb
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: milvus
+    #             port:
+    #               number: 19530
+    #       - path: /v1
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: milvus
+    #             port:
+    #               number: 19530

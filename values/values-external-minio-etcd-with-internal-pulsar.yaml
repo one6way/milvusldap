@@ -1,0 +1,188 @@
+cluster:
+  enabled: true
+
+standalone:
+  enabled: false
+
+# Custom non-root Milvus image
+image:
+  all:
+    repository: milvus-nonroot
+    tag: "2.5.0"
+    pullPolicy: IfNotPresent
+
+# Security baseline (Milvus pods only)
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+
+global:
+  imagePullPolicy: IfNotPresent
+
+# Disable built-in MinIO
+minio:
+  enabled: false
+
+# Keep built-in etcd by default
+etcd:
+  enabled: true
+  image:
+    repository: milvus-etcd-nonroot
+    tag: "3.5.16-r1"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+# External S3 (existing MinIO)
+externalS3:
+  enabled: true
+  host: "{{ EXTERNAL_MINIO_HOST }}"
+  port: "9000"
+  accessKey: "{{ EXTERNAL_MINIO_ACCESS_KEY }}"
+  secretKey: "{{ EXTERNAL_MINIO_SECRET_KEY }}"
+  useSSL: true
+  tls:
+    enabled: true
+    caSecretName: "external-minio-ca"
+    caSecretKey: "ca.crt"
+    caMountPath: "/etc/milvus/certs/external-minio-ca.crt"
+  bucketName: "{{ EXTERNAL_MINIO_BUCKET }}"
+  rootPath: "milvus"
+  useIAM: false
+  cloudProvider: "aws"
+  iamEndpoint: ""
+  region: ""
+  useVirtualHost: false
+
+# External etcd template (disabled by default).
+# IMPORTANT: when you switch to external etcd, set `etcd.enabled: false`.
+# Do not use Kubernetes control-plane etcd.
+externalEtcd:
+  enabled: false
+  endpoints:
+    - "{{ EXTERNAL_ETCD_HOST_1 }}:2379"
+    # - "{{ EXTERNAL_ETCD_HOST_2 }}:2379"
+    # - "{{ EXTERNAL_ETCD_HOST_3 }}:2379"
+
+# Keep Pulsar internal
+pulsarv3:
+  enabled: true
+  images:
+    zookeeper:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    bookie:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    autorecovery:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    broker:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    proxy:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+  zookeeper:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  bookkeeper:
+    replicaCount: 3
+    resources:
+      requests:
+        cpu: 80m
+        memory: 192Mi
+  broker:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  autorecovery:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+  proxy:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+proxy:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+mixCoordinator:
+  enabled: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+queryNode:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+dataNode:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+indexNode:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+auth:
+  keycloak:
+    enabled: false
+    mode: gateway
+    gateway:
+      image:
+        repository: envoyproxy/envoy
+        tag: v1.31.2
+        pullPolicy: IfNotPresent
+      replicas: 1
+      service:
+        type: ClusterIP
+        port: 19530
+      resources: {}
+    oidc:
+      issuer: "https://{{ KEYCLOAK_HOST }}/realms/{{ REALM }}"
+      audience: "{{ MILVUS_CLIENT_ID }}"
+      jwksUri: "https://{{ KEYCLOAK_HOST }}/realms/{{ REALM }}/protocol/openid-connect/certs"
+      jwksHost: "{{ KEYCLOAK_HOST }}"
+      jwksPort: 443

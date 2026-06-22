@@ -1,0 +1,46 @@
+# Milvus gRPC Ingress (порт 19530).
+# Источник: https://milvus.io/docs/v2.5.x/ingress.md
+# Инструкция: ingress/README.md
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milvus-grpc
+  namespace: {{ NAMESPACE }}
+  labels:
+    app.kubernetes.io/name: milvus
+    app.kubernetes.io/component: grpc
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC
+    nginx.ingress.kubernetes.io/proxy-body-size: "2048m"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # cert-manager.io/cluster-issuer: {{ CERT_MANAGER_CLUSTER_ISSUER }}
+spec:
+  ingressClassName: {{ INGRESS_CLASS }}
+  # tls:
+  #   - hosts:
+  #       - {{ MILVUS_GRPC_HOST }}
+  #     secretName: {{ TLS_SECRET_NAME_GRPC }}
+  rules:
+    - host: {{ MILVUS_GRPC_HOST }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: milvus
+                port:
+                  number: 19530
+    # Доступ по IP без DNS:
+    # - http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: milvus
+    #             port:
+    #               number: 19530

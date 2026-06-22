@@ -1,0 +1,11 @@
+# Copy to ldap-auth-ca.yaml with your LDAPS CA PEM.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap-auth-extauthz-ca
+  namespace: milvus
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    {{ PASTE_LDAPS_CA_PEM }}
+    -----END CERTIFICATE-----

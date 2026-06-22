@@ -1,0 +1,22 @@
+# Overlay для доступа к Milvus Web UI через Ingress (порт 9091).
+# Подмешивайте к основному values при helm upgrade:
+#
+#   helm upgrade --install milvus ./chart/milvus -n {{ NAMESPACE }} \
+#     -f values/values-kind-localpath.yaml \
+#     -f values/values-webui-ingress.yaml
+#
+# После helm upgrade:
+#   kubectl apply -f ingress/milvus-ui-ingress.yaml
+
+proxy:
+  http:
+    enabled: true
+
+# Порт 9091 на Service milvus (metrics / Web UI). В чарте по умолчанию true — явно для ясности.
+metrics:
+  enabled: true
+
+extraConfigFiles:
+  user.yaml: |
+    proxy:
+      slowQuerySpanInSeconds: 0.015

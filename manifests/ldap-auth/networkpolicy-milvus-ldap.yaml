@@ -1,0 +1,38 @@
+# Prod: пользовательский трафик только через milvus-ldap-gateway.
+# Прямой доступ к milvus:19530 с sync-паролем — break-glass (отдельная политика / admin NS).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: milvus-proxy-ingress-from-gateway-only
+  namespace: milvus
+  labels:
+    app.kubernetes.io/component: ib-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: milvus
+      component: proxy
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: milvus-ldap-gateway
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: milvus-ldap-sync
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ldap-auth-extauthz
+      ports:
+        - protocol: TCP
+          port: 19530
+    # break-glass: kubectl port-forward / admin tooling из того же namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: milvus
+      ports:
+        - protocol: TCP
+          port: 19530

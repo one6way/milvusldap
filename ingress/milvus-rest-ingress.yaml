@@ -1,0 +1,51 @@
+# Milvus REST API Ingress — порт Service 19530, HTTP
+# Пути (Milvus 2.5.0, proxy/service.go startHTTPServer):
+#   /v2/vectordb/* — REST v2 (рекомендуемый)
+#   /v1/*          — REST v1 (legacy)
+# Документация: https://milvus.io/api-reference/restful/v2.5.x/About.md
+#
+# Заменить плейсхолдеры {{ ... }} перед apply.
+# Пример: POST https://{{ MILVUS_REST_HOST }}/v2/vectordb/collections/list
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milvus-rest
+  namespace: {{ NAMESPACE }}
+  labels:
+    app.kubernetes.io/name: milvus
+    app.kubernetes.io/component: rest
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "2048m"
+    # cert-manager (раскомментировать при автовыпуске сертификата):
+    # cert-manager.io/cluster-issuer: {{ CERT_MANAGER_CLUSTER_ISSUER }}
+spec:
+  ingressClassName: {{ INGRESS_CLASS }}
+  tls:
+    - hosts:
+        - {{ MILVUS_REST_HOST }}
+      secretName: {{ TLS_SECRET_NAME }}
+  rules:
+    - host: {{ MILVUS_REST_HOST }}
+      http:
+        paths:
+          - path: /v2/vectordb
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ MILVUS_SERVICE_NAME }}
+                port:
+                  number: 19530
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ MILVUS_SERVICE_NAME }}
+                port:
+                  number: 19530

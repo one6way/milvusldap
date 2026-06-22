@@ -1,0 +1,19 @@
+dn: ou=users,dc=lab,dc=local
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=lab,dc=local
+objectClass: organizationalUnit
+ou: groups
+
+dn: cn=testuser,ou=users,dc=lab,dc=local
+objectClass: inetOrgPerson
+cn: testuser
+sn: Testuser
+uid: testuser
+userPassword: Testldap1
+
+dn: cn=g-milvus-read,ou=groups,dc=lab,dc=local
+objectClass: groupOfNames
+cn: g-milvus-read
+member: cn=testuser,ou=users,dc=lab,dc=local

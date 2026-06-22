@@ -1,0 +1,11 @@
+# Lab: reuse OpenLDAP CA placeholder (same as ldap-sync lab).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap-auth-extauthz-ca
+  namespace: milvus
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIICdummyLabOnlyNotForProd
+    -----END CERTIFICATE-----

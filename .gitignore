@@ -1,0 +1,26 @@
+# Тесты: локальный venv
+tests/.venv/
+**/__pycache__/
+*.pyc
+
+# Локальные артефакты prep (tar образов — не в Git; см. docker/ и images/*/Dockerfile)
+artifacts/
+*.tar.gz
+*.tar
+
+# Локальные экспорты образов (только Dockerfile в Git)
+images/export/
+images/ispravleno/
+images/init-base-nonroot/wheels/
+
+# Локальные бандлы всего стека
+milvus-airgap-bundle*.tar.gz
+
+# IDE / macOS
+.idea/
+.vscode/
+.cursor/
+.DS_Store
+
+# Временные логи демо (если кладут в репо)
+*.log

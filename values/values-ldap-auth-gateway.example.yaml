@@ -1,0 +1,28 @@
+# Non-secret config for LDAP domain login gateway (variant B).
+ldapAuthGateway:
+  namespace: milvus
+
+  ldapAuth:
+    image:
+      repository: milvus-ldap-auth
+      tag: "2.5.0"
+      pullPolicy: IfNotPresent
+
+  envoy:
+    image:
+      repository: envoy-nonroot
+      tag: v1.31.2
+      pullPolicy: IfNotPresent
+
+  ldap:
+    uri: "ldaps://{{ LDAP_HOST }}:636"
+    bindDn: "CN={{ LDAP_SVC_ACCOUNT }},OU=Service Accounts,DC=corp,DC=local"
+    userBase: "OU=Users,DC=corp,DC=local"
+    userFilter: "(&(objectClass=user)(objectCategory=person))"
+    usernameAttr: sAMAccountName
+    usernameNormalize: sanitize
+
+  milvus:
+    upstreamService: milvus
+    upstreamPort: "19530"
+    gatewayService: milvus-ldap-gateway

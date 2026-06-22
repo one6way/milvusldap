@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldap-auth-extauthz
+  namespace: milvus
+  labels:
+    app.kubernetes.io/name: ldap-auth-extauthz
+    app.kubernetes.io/component: ldap-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ldap-auth-extauthz
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ldap-auth-extauthz
+        app.kubernetes.io/component: ldap-auth
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65000
+        runAsGroup: 65000
+        fsGroup: 65000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ldap-auth
+          image: milvus-ldap-auth-nonroot:2.5.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: ldap-auth-extauthz-config
+            - secretRef:
+                name: ldap-auth-extauthz
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: ldap-ca
+              mountPath: /etc/ldap
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 20
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: ldap-ca
+          configMap:
+            name: ldap-auth-extauthz-ca
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldap-auth-extauthz
+  namespace: milvus
+  labels:
+    app.kubernetes.io/name: ldap-auth-extauthz
+spec:
+  selector:
+    app.kubernetes.io/name: ldap-auth-extauthz
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

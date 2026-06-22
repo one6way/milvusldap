@@ -1,0 +1,47 @@
+# Default Milvus gRPC endpoint from Attu pod (same namespace: short name is enough).
+milvus:
+  url: "milvus:19530"
+
+replicaCount: 1
+
+image:
+  repository: attu-nonroot
+  tag: "2.5.10"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+  # При type: NodePort задайте 30000–32767 или оставьте пустым для авто-назначения
+  nodePort: ""
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Optional extra env (e.g. ATTU_LOG_LEVEL=info)
+extraEnv: []

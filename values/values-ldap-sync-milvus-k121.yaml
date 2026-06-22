@@ -1,0 +1,49 @@
+# Non-secret config for LDAP -> Milvus RBAC sync on kind cluster milvus-k121.
+# Secrets: manifests/ldap-sync/ldap-sync-secret.example.yaml
+# Install: ./scripts/46-install-ldap-sync.sh
+
+ldapSync:
+  enabled: true
+  namespace: milvus
+  schedule: "*/15 * * * *"
+
+  image:
+    repository: milvus-ldap-sync
+    tag: "2.5.0-lab"
+    pullPolicy: IfNotPresent
+
+  milvus:
+    host: milvus
+    port: "19530"
+    rootUser: root
+    # root password must match extraConfigFiles.user.yaml defaultRootPassword
+    rootPassword: "user"
+    superUsers: "root,admin"
+    # Placeholder password for synced Milvus users (min 6 chars). Not AD password.
+    defaultUserPassword: "ChangeMeSync1"
+
+  ldap:
+    uri: "ldaps://{{ LDAP_HOST }}:636"
+    bindDn: "CN={{ LDAP_SVC_ACCOUNT }},OU=Service Accounts,DC=corp,DC=local"
+    userBase: "OU=Users,DC=corp,DC=local"
+    groupBase: "OU=Groups,DC=corp,DC=local"
+    userFilter: "(&(objectClass=user)(objectCategory=person))"
+    usernameAttr: sAMAccountName
+    groupAttr: memberOf
+    # none | lower | sanitize (dots/hyphens -> underscore for Milvus 2.5)
+    usernameNormalize: sanitize
+    revokeOrphanRoles: true
+    dryRun: false
+
+  groupRoleMap:
+    g-milvus-read: reader
+    g-milvus-write: writer
+    g-milvus-admin: admin
+
+  rolePrivileges:
+    reader:
+      - CollectionReadOnly
+      - DatabaseReadOnly
+    writer:
+      - CollectionReadWrite
+      - DatabaseReadWrite

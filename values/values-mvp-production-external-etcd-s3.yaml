@@ -1,0 +1,132 @@
+cluster:
+  enabled: true
+
+standalone:
+  enabled: false
+
+global:
+  imagePullPolicy: IfNotPresent
+
+image:
+  all:
+    repository: milvus-nonroot
+    tag: "2.5.0"
+    pullPolicy: IfNotPresent
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+
+# Disable internal etcd and configure external cluster.
+etcd:
+  enabled: false
+
+externalEtcd:
+  enabled: true
+  endpoints:
+    - "{{ EXTERNAL_ETCD_HOST_1 }}:2379"
+    - "{{ EXTERNAL_ETCD_HOST_2 }}:2379"
+    - "{{ EXTERNAL_ETCD_HOST_3 }}:2379"
+
+# Disable built-in MinIO and use external S3/MinIO endpoint.
+minio:
+  enabled: false
+
+externalS3:
+  enabled: true
+  host: "{{ EXTERNAL_MINIO_HOST }}"
+  port: "9000"
+  accessKey: "{{ EXTERNAL_MINIO_ACCESS_KEY }}"
+  secretKey: "{{ EXTERNAL_MINIO_SECRET_KEY }}"
+  useSSL: true
+  tls:
+    enabled: true
+    caSecretName: "external-minio-ca"
+    caSecretKey: "ca.crt"
+    caMountPath: "/etc/milvus/certs/external-minio-ca.crt"
+  bucketName: "{{ EXTERNAL_MINIO_BUCKET }}"
+  rootPath: "milvus"
+  useIAM: false
+  cloudProvider: "aws"
+  iamEndpoint: ""
+  region: ""
+  useVirtualHost: false
+
+pulsarv3:
+  enabled: true
+  images:
+    zookeeper:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    bookie:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    autorecovery:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    broker:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+    proxy:
+      repository: milvus-pulsar-nonroot
+      tag: "3.0.7"
+      pullPolicy: IfNotPresent
+  zookeeper:
+    replicaCount: 3
+  bookkeeper:
+    replicaCount: 3
+  broker:
+    replicaCount: 2
+  autorecovery:
+    replicaCount: 1
+  proxy:
+    replicaCount: 2
+
+proxy:
+  replicas: 2
+mixCoordinator:
+  enabled: true
+  replicas: 2
+queryNode:
+  replicas: 2
+  resources:
+    requests:
+      cpu: "2"
+      memory: 8Gi
+    limits:
+      cpu: "4"
+      memory: 16Gi
+dataNode:
+  replicas: 2
+  resources:
+    requests:
+      cpu: "2"
+      memory: 8Gi
+    limits:
+      cpu: "4"
+      memory: 16Gi
+indexNode:
+  replicas: 2
+  resources:
+    requests:
+      cpu: "2"
+      memory: 8Gi
+    limits:
+      cpu: "4"
+      memory: 16Gi
+
+auth:
+  keycloak:
+    enabled: false

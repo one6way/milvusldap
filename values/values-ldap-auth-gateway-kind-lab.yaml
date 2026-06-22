@@ -1,0 +1,23 @@
+# Lab: LDAP domain-login gateway with OpenLDAP in namespace milvus.
+ldapAuthGateway:
+  namespace: milvus
+
+  ldapAuth:
+    image:
+      repository: milvus-ldap-auth
+      tag: "2.5.0-lab"
+      pullPolicy: IfNotPresent
+
+  envoy:
+    image:
+      repository: envoy-nonroot
+      tag: v1.31.2
+      pullPolicy: IfNotPresent
+
+  ldap:
+    uri: "ldap://openldap-lab:389"
+    bindDn: "cn=admin,dc=lab,dc=local"
+    userBase: "ou=users,dc=lab,dc=local"
+    userFilter: "(objectClass=inetOrgPerson)"
+    usernameAttr: uid
+    usernameNormalize: none

@@ -1,0 +1,52 @@
+# Overlay: switch Milvus Helm release from internal Pulsar v3 to internal Kafka (Bitnami subchart).
+# Apply ON TOP of your existing values (prod/kind), after maintenance-window MQ migration.
+#
+# helm upgrade milvus ./chart/milvus -n milvus \
+#   -f values/values-mvp-production.yaml \
+#   -f values/values-kafka-internal-overlay.yaml \
+#   --reset-then-reuse-values --timeout 30m --wait
+
+pulsar:
+  enabled: false
+
+pulsarv3:
+  enabled: false
+
+kafka:
+  enabled: true
+  name: kafka
+  replicaCount: 3
+  image:
+    repository: "{{ INTERNAL_REGISTRY }}/bitnami/kafka"
+    tag: "3.1.0-debian-10-r52"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    storageClass: "{{ STORAGE_CLASS }}"
+    accessMode: ReadWriteOnce
+    size: 300Gi
+  zookeeper:
+    enabled: true
+    replicaCount: 3
+    image:
+      repository: "{{ INTERNAL_REGISTRY }}/bitnami/zookeeper"
+      tag: "3.8.0-debian-10-r63"
+      pullPolicy: IfNotPresent
+    persistence:
+      enabled: true
+      storageClass: "{{ STORAGE_CLASS }}"
+      size: 20Gi
+  # Align with Milvus pulsar maxMessageSize (~5MB default in chart)
+  maxMessageBytes: _10485760
+  extraEnvVars:
+    - name: KAFKA_CFG_MAX_PARTITION_FETCH_BYTES
+      value: "5242880"
+    - name: KAFKA_CFG_MAX_REQUEST_SIZE
+      value: "5242880"
+    - name: KAFKA_CFG_REPLICA_FETCH_MAX_BYTES
+      value: "10485760"
+    - name: KAFKA_CFG_FETCH_MESSAGE_MAX_BYTES
+      value: "5242880"
+
+externalKafka:
+  enabled: false

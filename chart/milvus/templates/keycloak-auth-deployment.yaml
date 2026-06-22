@@ -1,0 +1,55 @@
+{{- if .Values.auth.keycloak.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "milvus.fullname" . }}-auth-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "milvus.labels" . | indent 4 }}
+    component: "auth-gateway"
+spec:
+  replicas: {{ .Values.auth.keycloak.gateway.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "milvus.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      component: "auth-gateway"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "milvus.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: "auth-gateway"
+    spec:
+{{- with .Values.auth.keycloak.gateway.podSecurityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
+      containers:
+      - name: envoy
+        image: "{{ .Values.auth.keycloak.gateway.image.repository }}:{{ .Values.auth.keycloak.gateway.image.tag }}"
+        imagePullPolicy: {{ .Values.auth.keycloak.gateway.image.pullPolicy }}
+{{- with .Values.auth.keycloak.gateway.containerSecurityContext }}
+        securityContext:
+{{ toYaml . | indent 10 }}
+{{- end }}
+        args:
+        - "-c"
+        - "/etc/envoy/envoy.yaml"
+        - "--log-level"
+        - "info"
+        ports:
+        - containerPort: 19530
+          name: grpc
+          protocol: TCP
+        volumeMounts:
+        - name: envoy-config
+          mountPath: /etc/envoy
+          readOnly: true
+        resources:
+{{ toYaml .Values.auth.keycloak.gateway.resources | indent 10 }}
+      volumes:
+      - name: envoy-config
+        configMap:
+          name: {{ include "milvus.fullname" . }}-auth-gateway
+{{- end }}

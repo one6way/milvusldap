@@ -1,0 +1,10 @@
+# Attu UI через NodePort (без Ingress).
+#
+#   helm upgrade --install attu chart/attu -n milvus \
+#     -f values/values-attu-kind.yaml -f values/values-attu-nodeport.yaml
+#
+# Браузер: http://<node-ip>:30300  (порт по умолчанию ниже; смените при конфликте)
+
+service:
+  type: NodePort
+  nodePort: 30300

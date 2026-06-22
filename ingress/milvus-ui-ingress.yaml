@@ -1,0 +1,44 @@
+# Milvus Web UI Ingress — порт Service 9091, путь /webui/
+# Документация: ingress/README.md
+#
+# Заменить плейсхолдеры {{ ... }} перед apply.
+# URL: https://{{ MILVUS_UI_HOST }}/webui/
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milvus-ui
+  namespace: {{ NAMESPACE }}
+  labels:
+    app.kubernetes.io/name: milvus
+    app.kubernetes.io/component: webui
+  annotations:
+    # TLS redirect (при включённом spec.tls)
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # Backend: HTTP на metrics-порту proxy (9091), только Web UI
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    # cert-manager (раскомментировать при автовыпуске сертификата):
+    # cert-manager.io/cluster-issuer: {{ CERT_MANAGER_CLUSTER_ISSUER }}
+spec:
+  ingressClassName: {{ INGRESS_CLASS }}
+  tls:
+    - hosts:
+        - {{ MILVUS_UI_HOST }}
+      secretName: {{ TLS_SECRET_NAME }}
+  rules:
+    - host: {{ MILVUS_UI_HOST }}
+      http:
+        paths:
+          # Только /webui — не публикуем /metrics и /api/v1 с порта 9091
+          - path: /webui
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ MILVUS_SERVICE_NAME }}
+                port:
+                  number: 9091

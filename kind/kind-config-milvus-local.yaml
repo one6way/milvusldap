@@ -1,0 +1,20 @@
+# kind: проброс NodePort Milvus/Attu на localhost (macOS + Docker Desktop).
+# Создание: kind create cluster --name milvus-local --config kind/kind-config-milvus-local.yaml
+# Должны совпадать с values-kind-nodeport.yaml / values-attu-nodeport.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30300
+        hostPort: 30300
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30530
+        hostPort: 30530
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30531
+        hostPort: 30531
+        listenAddress: "127.0.0.1"
+        protocol: TCP

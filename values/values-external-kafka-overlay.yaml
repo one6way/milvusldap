@@ -1,0 +1,24 @@
+# Overlay: Milvus uses external Kafka (enterprise cluster), disable bundled Pulsar/Kafka.
+#
+# helm upgrade milvus ./chart/milvus -n milvus \
+#   -f values/values-mvp-production.yaml \
+#   -f values/values-external-kafka-overlay.yaml \
+#   --reset-then-reuse-values --timeout 30m --wait
+
+pulsar:
+  enabled: false
+
+pulsarv3:
+  enabled: false
+
+kafka:
+  enabled: false
+
+externalKafka:
+  enabled: true
+  brokerList: "{{ KAFKA_BROKERS }}"   # e.g. kafka-0.corp.local:9092,kafka-1.corp.local:9092
+  securityProtocol: SASL_SSL            # PLAINTEXT | SASL_PLAINTEXT | SASL_SSL | SSL
+  sasl:
+    mechanisms: SCRAM-SHA-512           # PLAIN | SCRAM-SHA-256 | SCRAM-SHA-512
+    username: "{{ KAFKA_MILVUS_USER }}"
+    password: "{{ KAFKA_MILVUS_PASSWORD }}"  # prefer Secret + extraConfigFiles in prod

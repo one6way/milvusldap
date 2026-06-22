@@ -1,0 +1,40 @@
+# Kind lab: Envoy JWT gateway -> Keycloak (LDAP federation настраивается отдельно).
+# Использование:
+#   helm upgrade --install milvus ./chart/milvus -n milvus \
+#     -f values/values-kind-localpath.yaml \
+#     -f values/values-keycloak-kind-lab.yaml
+
+auth:
+  keycloak:
+    enabled: true
+    mode: gateway
+    gateway:
+      image:
+        repository: envoy-nonroot
+        tag: v1.31.2
+        pullPolicy: IfNotPresent
+      replicas: 1
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65000
+        runAsGroup: 65000
+        fsGroup: 65000
+      containerSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65000
+        runAsGroup: 65000
+        allowPrivilegeEscalation: false
+      service:
+        type: ClusterIP
+        port: 19530
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+    oidc:
+      issuer: "http://keycloak.milvus.svc.cluster.local:8080/realms/milvus"
+      audience: "milvus-client"
+      jwksUri: "http://keycloak.milvus.svc.cluster.local:8080/realms/milvus/protocol/openid-connect/certs"
+      jwksHost: "keycloak.milvus.svc.cluster.local"
+      jwksPort: 8080
+      jwksScheme: http

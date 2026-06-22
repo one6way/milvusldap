@@ -1,0 +1,93 @@
+{{- if .Values.auth.keycloak.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "milvus.fullname" . }}-auth-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "milvus.labels" . | indent 4 }}
+    component: "auth-gateway"
+data:
+  envoy.yaml: |
+    static_resources:
+      listeners:
+      - name: milvus_listener
+        address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: 19530
+        filter_chains:
+        - filters:
+          - name: envoy.filters.network.http_connection_manager
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+              stat_prefix: ingress_http
+              codec_type: AUTO
+              route_config:
+                name: local_route
+                virtual_hosts:
+                - name: milvus_backend
+                  domains: ["*"]
+                  routes:
+                  - match: { prefix: "/" }
+                    route:
+                      cluster: milvus_backend
+                      timeout: 0s
+              http_filters:
+              - name: envoy.filters.http.jwt_authn
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                  providers:
+                    keycloak:
+                      issuer: "{{ .Values.auth.keycloak.oidc.issuer }}"
+                      audiences:
+                      - "{{ .Values.auth.keycloak.oidc.audience }}"
+                      remote_jwks:
+                        http_uri:
+                          uri: "{{ .Values.auth.keycloak.oidc.jwksUri }}"
+                          cluster: keycloak_jwks
+                          timeout: 5s
+                        cache_duration: 300s
+                      forward: true
+                  rules:
+                  - match: { prefix: "/" }
+                    requires:
+                      provider_name: keycloak
+              - name: envoy.filters.http.router
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+      clusters:
+      - name: milvus_backend
+        connect_timeout: 5s
+        type: STRICT_DNS
+        lb_policy: ROUND_ROBIN
+        http2_protocol_options: {}
+        load_assignment:
+          cluster_name: milvus_backend
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: {{ include "milvus.fullname" . }}
+                    port_value: 19530
+      - name: keycloak_jwks
+        connect_timeout: 5s
+        type: LOGICAL_DNS
+        lb_policy: ROUND_ROBIN
+        load_assignment:
+          cluster_name: keycloak_jwks
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: {{ .Values.auth.keycloak.oidc.jwksHost }}
+                    port_value: {{ .Values.auth.keycloak.oidc.jwksPort }}
+{{- if eq (default "https" .Values.auth.keycloak.oidc.jwksScheme) "https" }}
+        transport_socket:
+          name: envoy.transport_sockets.tls
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+{{- end }}
+{{- end }}

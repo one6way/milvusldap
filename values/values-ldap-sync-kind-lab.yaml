@@ -1,0 +1,38 @@
+# Local lab on kind: OpenLDAP (osixia) + Milvus ldap-sync in namespace milvus.
+ldapSync:
+  enabled: true
+  namespace: milvus
+  schedule: "*/15 * * * *"
+
+  image:
+    repository: milvus-ldap-sync
+    tag: "2.5.0-lab"
+    pullPolicy: IfNotPresent
+
+  milvus:
+    host: milvus
+    port: "19530"
+    rootUser: root
+    rootPassword: "user"
+    superUsers: "root,admin"
+    defaultUserPassword: "AttuTest1"
+
+  ldap:
+    uri: "ldap://openldap-lab:389"
+    bindDn: "cn=admin,dc=lab,dc=local"
+    userBase: "ou=users,dc=lab,dc=local"
+    groupBase: "ou=groups,dc=lab,dc=local"
+    userFilter: "(objectClass=inetOrgPerson)"
+    usernameAttr: uid
+    groupAttr: memberOf
+    usernameNormalize: none
+    revokeOrphanRoles: true
+    dryRun: false
+
+  groupRoleMap:
+    g-milvus-read: reader
+
+  rolePrivileges:
+    reader:
+      - CollectionReadOnly
+      - DatabaseReadOnly

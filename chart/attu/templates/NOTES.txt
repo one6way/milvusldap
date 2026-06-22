@@ -1,0 +1,11 @@
+1. Attu release: {{ .Release.Name }} in namespace {{ .Release.Namespace }}.
+2. Default MILVUS_URL inside Attu pod: {{ .Values.milvus.url }}
+{{- if eq .Values.service.type "NodePort" }}
+3. Service type NodePort: UI на порту узла {{ .Values.service.nodePort | default "(auto)" }} → target port {{ .Values.service.port }}.
+   Пример: http://<IP-ноды>:{{ .Values.service.nodePort | default "<см. kubectl get svc>" }}
+{{- else }}
+3. Port-forward UI:
+   kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "attu.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+   Open http://127.0.0.1:{{ .Values.service.port }}
+{{- end }}
+4. In Attu "Connect" form use host "milvus" (not 127.0.0.1), port 19530. With RBAC: user root, password from Milvus values (see ATTU.md).

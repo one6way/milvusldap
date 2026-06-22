@@ -1,0 +1,12 @@
+# Kind / local-path profile: non-root image built via scripts/58-build-attu-nonroot-image.sh + kind load.
+milvus:
+  url: "milvus:19530"
+
+image:
+  repository: attu-nonroot
+  tag: "2.5.10"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000

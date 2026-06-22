@@ -1,0 +1,43 @@
+# Milvus Web UI Ingress (порт 9091, путь /webui/).
+# Инструкция: ingress/README.md
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: milvus-ui
+  namespace: {{ NAMESPACE }}
+  labels:
+    app.kubernetes.io/name: milvus
+    app.kubernetes.io/component: webui
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  ingressClassName: {{ INGRESS_CLASS }}
+  # tls:
+  #   - hosts:
+  #       - {{ MILVUS_UI_HOST }}
+  #     secretName: {{ TLS_SECRET_NAME_UI }}
+  rules:
+    - host: {{ MILVUS_UI_HOST }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: milvus
+                port:
+                  number: 9091
+    # Доступ по IP без DNS:
+    # - http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: milvus
+    #             port:
+    #               number: 9091
