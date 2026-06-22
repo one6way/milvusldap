@@ -20,7 +20,7 @@
 
 ## 2. Позиция в Kubernetes: клиенты и сервисы
 
-Потоки **снаружи кластера** к **Service** и **Deployment** в `milvus`. Ниже — **базовый** вариант **без** OIDC-gateway; опциональный периметр **Keycloak и Envoy** описан в [разделе 7](#7-опциональный-контур-keycloak-и-envoy-auth-gateway).
+Потоки **снаружи кластера** к **Service** и **Deployment** в `milvus`. Периметр **LDAP + доменный пароль** (наш контур): [docs/architecture/COMPONENT_INTERACTION.md](docs/architecture/COMPONENT_INTERACTION.md).
 
 ```mermaid
 flowchart TB
@@ -176,9 +176,12 @@ flowchart LR
 
 ---
 
-## 7. Опциональный контур: Keycloak и Envoy auth-gateway
+## 7. Справочно: шаблон upstream Helm (JWT / Keycloak) — **не наш контур**
 
-Включается Helm-тогглом `auth.keycloak.enabled: true`, режим **`gateway`** ([values-keycloak-enabled.yaml](values/values-keycloak-enabled.yaml)). Подробная процедура и варианты A/B (только gateway / gateway + синхронизация ролей): [KEYCLOAK_AUTH_FOR_MILVUS.md](KEYCLOAK_AUTH_FOR_MILVUS.md).
+> **Не используется** в проекте Milvus + LDAP. Это встроенный шаблон чарта Zilliz (`auth.keycloak.enabled`).  
+> **Наш периметр:** `milvus-ldap-gateway` + `ldap-auth-extauthz` + LDAP bind + `milvus-ldap-sync` — см. [docs/architecture/](docs/architecture/README.md).
+
+Включается Helm-тогглом `auth.keycloak.enabled: true`, режим **`gateway`** ([values-keycloak-enabled.yaml](values/values-keycloak-enabled.yaml)). Отдельный справочник: [KEYCLOAK_AUTH_FOR_MILVUS.md](KEYCLOAK_AUTH_FOR_MILVUS.md) — только если когда-либо понадобится SSO через OIDC (сейчас **не применяется**).
 
 ### 7.1 Роли компонентов
 
@@ -194,7 +197,7 @@ flowchart LR
 
 Чарт создаёт при `enabled: true`: **Deployment** + **Service** + **ConfigMap** с суффиксом **`auth-gateway`** (имя: `{{ include "milvus.fullname" . }}-auth-gateway`).
 
-### 7.2 Поток: клиент → JWT → Envoy → Milvus
+### 7.2 Поток: клиент → JWT → Envoy → Milvus *(только SSO / Keycloak — не LDAP-контур)*
 
 ```mermaid
 flowchart TB

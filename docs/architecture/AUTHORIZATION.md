@@ -319,9 +319,10 @@ flowchart TB
 
 | Режим | Milvus address | Пароль в UI | LDAP runtime | Для prod |
 |-------|----------------|-------------|--------------|----------|
-| **Lab без gateway** | `milvus:19530` | sync-пароль | нет | нет |
-| **Prod LDAP gateway** | `milvus-ldap-gateway:19530` | доменный | да (bind) | **да** |
-| **Keycloak (вариант A)** | `milvus-auth-gateway:19530` | OIDC / SSO | через Keycloak | опционально |
+| **Lab без gateway** | `milvus:19530` | sync-пароль | нет (только sync) | только lab |
+| **Prod LDAP gateway** | `milvus-ldap-gateway:19530` | доменный | да (bind на каждый запрос) | **да** |
+
+Sync (`milvus-ldap-sync`) нужен **в обоих** режимах — он создаёт пользователей и роли в Milvus из AD-групп.
 
 ---
 

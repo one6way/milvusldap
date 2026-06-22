@@ -333,7 +333,6 @@ flowchart LR
 
 ## 12. Что намеренно вне этой схемы
 
-- **Keycloak / JWT gateway** — альтернативный путь (вариант A), см. [KEYCLOAK_AUTH_FOR_MILVUS.md](../../KEYCLOAK_AUTH_FOR_MILVUS.md).
 - **Миграция Pulsar → Kafka** — см. [docs/kafka/README.md](../kafka/README.md).
 - **Init Jobs** Pulsar/BookKeeper — одноразовые pod'ы при установке.
 

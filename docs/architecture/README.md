@@ -18,7 +18,7 @@
 
 ## Выбранный контур (prod)
 
-**Вариант B — LDAP + Envoy**, без Keycloak и без форка Milvus:
+**Вариант B — LDAP + Envoy**, без Keycloak и без форка Milvus (единственный рабочий контур в этом репозитории):
 
 ```
 AD/LDAPS → ldap-sync (CronJob) → Milvus users/roles
