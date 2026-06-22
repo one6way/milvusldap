@@ -100,3 +100,10 @@ VALUES_FILE=values/values-ldap-auth-gateway-prod.yaml ./scripts/48-install-ldap-
 ## Полный README стека Milvus
 
 Общая документация (Helm, Attu, air-gap, Keycloak): [README.md](README.md)
+
+## Git-репозиторий
+
+Целевой remote: **https://github.com/one6way/milvusldap**
+
+Инструкция push (без образов): [PUSH_TO_GITHUB.md](PUSH_TO_GITHUB.md)
+

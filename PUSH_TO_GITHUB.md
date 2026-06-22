@@ -13,7 +13,7 @@
 
 ## Создать репозиторий на GitHub
 
-1. https://github.com/new → имя, например `milvus-ldap-delivery`, **Private**.
+1. https://github.com/one6way/milvusldap (уже создан) или https://github.com/new
 2. **Не** добавлять README/license (у нас уже есть коммит).
 
 ## Push (токен с правом `repo`)
@@ -21,7 +21,7 @@
 ```bash
 cd milfus-main   # или путь к клону
 
-git remote add origin https://github.com/one6way/milvus-ldap-delivery.git
+git remote add origin https://github.com/one6way/milvusldap.git
 # один раз: ввести логин + Personal Access Token как пароль
 git push -u origin main
 ```
@@ -30,7 +30,7 @@ git push -u origin main
 
 ```bash
 export GITHUB_TOKEN='<ваш PAT с scope repo>'
-git push "https://x-access-token:${GITHUB_TOKEN}@github.com/one6way/milvus-ldap-delivery.git" main
+git push "https://x-access-token:${GITHUB_TOKEN}@github.com/one6way/milvusldap.git" main
 ```
 
 ## Проверка перед push
