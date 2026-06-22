@@ -16,6 +16,8 @@
 | **Собрать образы LDAP** | `scripts/57-build-ldap-images-nonroot.sh` | Dockerfiles в `docker/` |
 | **Собрать стек Milvus** | [AIRGAP_PREP_NONROOT_ONCE.md](AIRGAP_PREP_NONROOT_ONCE.md) | `scripts/53-build-all-nonroot-images.sh` |
 | **Air-gap установка Milvus** | [AIRGAP_INSTALL.md](AIRGAP_INSTALL.md) | `scripts/70-install-milvus-airgap.sh` |
+| **Миграция Pulsar → Kafka** | [docs/kafka/README.md](docs/kafka/README.md) | maintenance window + helm upgrade |
+| **Kafka: registry vs tar.gz** | [docs/kafka/IMAGES_AND_REGISTRY.md](docs/kafka/IMAGES_AND_REGISTRY.md) | корп. Kafka / internal registry |
 
 ---
 
@@ -56,10 +58,11 @@ milfus-main/
 │
 ├── images/                       # Dockerfile non-root Milvus/etcd/… (в Git)
 ├── chart/                        # Helm chart Milvus
-└── artifacts/                    # НЕ в Git — tar.gz образов (локально)
-    └── images/
-        ├── milvus-ldap-sync-nonroot_2.5.0.tar.gz
-        └── milvus-ldap-auth-nonroot_2.5.0.tar.gz
+└── docs/kafka/                   # Pulsar → Kafka (без образов в Git)
+    ├── README.md
+    ├── MIGRATION.md
+    ├── IMAGES_AND_REGISTRY.md
+    └── values/                   # Helm overlays
 ```
 
 ---
@@ -106,4 +109,27 @@ VALUES_FILE=values/values-ldap-auth-gateway-prod.yaml ./scripts/48-install-ldap-
 Целевой remote: **https://github.com/one6way/milvusldap**
 
 Инструкция push (без образов): [PUSH_TO_GITHUB.md](PUSH_TO_GITHUB.md)
+
+## Пакет для закрытого контура (исходники + образы)
+
+Собрать одной командой (рядом с `milfus-main/` появится каталог `milvus-ldap-airgap-delivery/`):
+
+```bash
+./scripts/81-export-ldap-airgap-delivery.sh
+```
+
+| В пакете | Содержание |
+|----------|------------|
+| `images/` | 9× tar.gz (Milvus, Attu, Envoy, LDAP, etcd, minio, pulsar, config-tool) + опц. Kafka |
+| `images/kafka/README.md` | когда нужны / не нужны образы Kafka |
+| `docs/kafka/` | миграция Pulsar → Kafka, values overlays (без образов) |
+| `source/` | полное дерево milfus-main без дублей tar |
+| `load-images.sh` | docker load на целевом контуре |
+| `MANIFEST.md` | SHA256 образов |
+
+Упаковать для переноса:
+
+```bash
+tar -czf milvus-ldap-airgap-delivery.tar.gz -C .. milvus-ldap-airgap-delivery
+```
 

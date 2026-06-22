@@ -1,8 +1,11 @@
 # Overlay: Milvus uses external Kafka (enterprise cluster), disable bundled Pulsar/Kafka.
 #
+# Образ Kafka НЕ нужен в пакете Milvus — используется кластер компании.
+# Подробно: docs/kafka/IMAGES_AND_REGISTRY.md (сценарий A).
+#
 # helm upgrade milvus ./chart/milvus -n milvus \
 #   -f values/values-mvp-production.yaml \
-#   -f values/values-external-kafka-overlay.yaml \
+#   -f docs/kafka/values/values-external-kafka-overlay.yaml \
 #   --reset-then-reuse-values --timeout 30m --wait
 
 pulsar:

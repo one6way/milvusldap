@@ -3,7 +3,7 @@
 #
 # helm upgrade milvus ./chart/milvus -n milvus \
 #   -f values/values-mvp-production.yaml \
-#   -f values/values-kafka-internal-overlay.yaml \
+#   -f docs/kafka/values/values-kafka-internal-overlay.yaml \
 #   --reset-then-reuse-values --timeout 30m --wait
 
 pulsar:
