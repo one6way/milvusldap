@@ -1,8 +1,15 @@
 # Инфраструктурная схема (Milvus Distributed в Kubernetes)
 
+> ## Схема LDAP / AD (наш контур, без Keycloak)
+>
+> **Смотри сюда:** [ARCHITECTURE_LDAP_AD.md](ARCHITECTURE_LDAP_AD.md)  
+> Подробнее: [docs/architecture/COMPONENT_INTERACTION.md](docs/architecture/COMPONENT_INTERACTION.md) · [docs/architecture/AUTHORIZATION.md](docs/architecture/AUTHORIZATION.md)
+>
+> Этот файл ниже — **ядро Milvus** (etcd, MinIO, Pulsar). Раздел §7 про JWT/Keycloak — **не используется**, только справочник upstream Helm.
+
 Документ описывает **архитектуру из этого репозитория**: **Milvus 2.5.x** в **distributed**-режиме в **Kubernetes** (Helm chart **4.2.33**), **не** standalone на одной ВМ. Схемы отрисованы в **Mermaid** — на GitHub они подставляются автоматически при просмотре `.md` ([поддержка Mermaid в GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)).
 
-**Связанные материалы:** [MILVUS_PODS_EXPLAINED.md](MILVUS_PODS_EXPLAINED.md) (роли pod), [MILVUS_COMPONENT_FAILURE_RUNBOOK.md](MILVUS_COMPONENT_FAILURE_RUNBOOK.md), [README.md](README.md).
+**Связанные материалы:** [ARCHITECTURE_LDAP_AD.md](ARCHITECTURE_LDAP_AD.md) (LDAP), [MILVUS_PODS_EXPLAINED.md](MILVUS_PODS_EXPLAINED.md) (роли pod), [MILVUS_COMPONENT_FAILURE_RUNBOOK.md](MILVUS_COMPONENT_FAILURE_RUNBOOK.md), [README.md](README.md).
 
 ---
 
@@ -20,7 +27,7 @@
 
 ## 2. Позиция в Kubernetes: клиенты и сервисы
 
-Потоки **снаружи кластера** к **Service** и **Deployment** в `milvus`. Периметр **LDAP + доменный пароль** (наш контур): [docs/architecture/COMPONENT_INTERACTION.md](docs/architecture/COMPONENT_INTERACTION.md).
+Базовая схема **без LDAP-gateway** (прямой `Service milvus`). В **prod** клиенты идут на `milvus-ldap-gateway` — см. [ARCHITECTURE_LDAP_AD.md](ARCHITECTURE_LDAP_AD.md).
 
 ```mermaid
 flowchart TB
@@ -176,6 +183,9 @@ flowchart LR
 
 ---
 
+<details>
+<summary><strong>§7 Справочно: JWT / Keycloak (upstream Helm) — НЕ наш контур, можно не читать</strong></summary>
+
 ## 7. Справочно: шаблон upstream Helm (JWT / Keycloak) — **не наш контур**
 
 > **Не используется** в проекте Milvus + LDAP. Это встроенный шаблон чарта Zilliz (`auth.keycloak.enabled`).  
@@ -291,6 +301,8 @@ auth:
 ```
 
 Полный пример значений: [values-keycloak-enabled.yaml](values/values-keycloak-enabled.yaml).
+
+</details>
 
 ---
 

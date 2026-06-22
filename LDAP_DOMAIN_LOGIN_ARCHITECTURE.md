@@ -1,6 +1,6 @@
 # Доменный логин в Milvus / Attu (LDAP + Envoy)
 
-> **Подробные схемы:** [docs/architecture/COMPONENT_INTERACTION.md](docs/architecture/COMPONENT_INTERACTION.md) (взаимодействие) · [docs/architecture/AUTHORIZATION.md](docs/architecture/AUTHORIZATION.md) (авторизация)
+> **Подробные схемы:** [ARCHITECTURE_LDAP_AD.md](ARCHITECTURE_LDAP_AD.md) · [docs/architecture/COMPONENT_INTERACTION.md](docs/architecture/COMPONENT_INTERACTION.md) · [docs/architecture/AUTHORIZATION.md](docs/architecture/AUTHORIZATION.md)
 
 Цель: пользователь вводит **доменный логин и пароль** (`test514512` + пароль AD), права — из **AD-групп** через RBAC sync.
 

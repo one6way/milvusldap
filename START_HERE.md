@@ -8,8 +8,9 @@
 
 | Задача | Документ | Действие |
 |--------|----------|----------|
-| **Понять архитектуру** | [docs/architecture/README.md](docs/architecture/README.md) | Схемы взаимодействия и авторизации |
-| **Краткая схема LDAP** | [LDAP_DOMAIN_LOGIN_ARCHITECTURE.md](LDAP_DOMAIN_LOGIN_ARCHITECTURE.md) | gateway + ldap-auth + sync |
+| **Архитектура LDAP / AD** | [ARCHITECTURE_LDAP_AD.md](ARCHITECTURE_LDAP_AD.md) | **Главная схема** (без Keycloak) |
+| **Понять архитектуру (подробно)** | [docs/architecture/README.md](docs/architecture/README.md) | Взаимодействие + авторизация |
+| **Краткая схема LDAP** | [LDAP_DOMAIN_LOGIN_ARCHITECTURE.md](LDAP_DOMAIN_LOGIN_ARCHITECTURE.md) | Установка gateway |
 | **Развернуть на lab (kind)** | [CORP_LDAP_DEPLOYMENT_CHECKLIST.md](CORP_LDAP_DEPLOYMENT_CHECKLIST.md) §4 | `./scripts/47-setup-ldap-lab.sh` → `49-setup-ldap-auth-gateway-lab.sh` |
 | **Развернуть prod (LDAPS)** | [CORP_LDAP_DEPLOYMENT_CHECKLIST.md](CORP_LDAP_DEPLOYMENT_CHECKLIST.md) §5 | values prod + `46` / `48` install scripts |
 | **Протокол тестирования** | [LDAP_MILVUS_TEST_PROTOCOL.md](LDAP_MILVUS_TEST_PROTOCOL.md) | Матрица проверок, логи, команды |
