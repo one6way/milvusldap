@@ -13,7 +13,7 @@
 | [values/values-external-kafka-overlay.yaml](values/values-external-kafka-overlay.yaml) | Внешний Kafka кластер |
 | [IMAGES_AND_REGISTRY.md](IMAGES_AND_REGISTRY.md) | Образы / корпоративный registry |
 | [chart/milvus/templates/config.tpl](../../chart/milvus/templates/config.tpl) | Как Helm рендерит `messageQueue: kafka` |
-| [INFRASTRUCTURE_ARCHITECTURE.md](../../INFRASTRUCTURE_ARCHITECTURE.md) | Общая схема (до смены MQ) |
+| [INFRASTRUCTURE_ARCHITECTURE.md](../../INFRASTRUCTURE_ARCHITECTURE.md) | Общая схема; §4 Pulsar, **§4.1 Kafka** |
 
 ---
 

@@ -139,6 +139,66 @@ flowchart TB
 
 ---
 
+## 4.1. Kafka (после миграции Pulsar → Kafka)
+
+> **Сейчас по умолчанию** в values — **Pulsar** (§4 выше).  
+> Этот раздел — целевая схема **после** `helm upgrade` с `messageQueue: kafka`.  
+> Пошаговая миграция, overlays и образы: **[docs/kafka/MIGRATION.md](docs/kafka/MIGRATION.md)** · [docs/kafka/README.md](docs/kafka/README.md)
+
+**Не меняется при смене MQ:** etcd, MinIO/S3, Milvus roles, **LDAP** (`milvus-ldap-sync`, `milvus-ldap-gateway`, `ldap-auth`).
+
+### Внутренний Kafka (Helm subchart Bitnami, namespace `milvus`)
+
+Аналог §4 для Pulsar: Zookeeper + broker'ы, Milvus ходит на `milvus-kafka:9092`.
+
+```mermaid
+flowchart TB
+  subgraph kafka["milvus-kafka-* (namespace milvus)"]
+    KZ["Zookeeper x3"]
+    KB0["Kafka broker 0"]
+    KB1["Kafka broker 1"]
+    KB2["Kafka broker 2"]
+  end
+
+  KZ --> KB0
+  KZ --> KB1
+  KZ --> KB2
+
+  MW["Milvus: mixcoord, datanode, querynode, indexnode"]
+  MW -->|"brokerList :9092<br/>WAL / time-tick"| KB0
+  MW --> KB1
+  MW --> KB2
+```
+
+Values: [docs/kafka/values/values-kafka-internal-overlay.yaml](docs/kafka/values/values-kafka-internal-overlay.yaml)
+
+### Внешний корпоративный Kafka (рекомендуется в prod)
+
+Pulsar/ZK/bookie **в namespace Milvus не разворачиваются** — только клиентские настройки в Milvus:
+
+```mermaid
+flowchart TB
+  subgraph corp["Корпоративный контур"]
+    EK[("Kafka cluster<br/>SASL/TLS :9092/9096")]
+  end
+
+  subgraph ns["namespace milvus"]
+    MW["Milvus components<br/>proxy · mixcoord · workers"]
+    ETCD[("etcd")]
+    S3[("MinIO / S3")]
+  end
+
+  MW --> ETCD
+  MW --> S3
+  MW -->|"externalKafka.brokerList"| EK
+```
+
+Values: [docs/kafka/values/values-external-kafka-overlay.yaml](docs/kafka/values/values-external-kafka-overlay.yaml)
+
+**Роль MQ (как у Pulsar):** Kafka держит **WAL** (insert/delete, time-tick); векторные сегменты и индексы — по-прежнему в **MinIO/S3**, метаданные — в **etcd**.
+
+---
+
 ## 5. Упрощённый поток: операция search
 
 Последовательность на уровне **логических ролей** (без детализации внутренних RPC Milvus).
@@ -163,7 +223,7 @@ sequenceDiagram
 
 ## 6. Хранилище (PVC) и образы
 
-- **Диски:** etcd, MinIO, Zookeeper Pulsar, **journal/ledgers** BookKeeper — отдельные **PVC** (в kind-профиле чаще всего **local-path**; в проде — свой StorageClass из [values-mvp-production.yaml](values-mvp-production.yaml) / изолированный контур шаблона).
+- **Диски:** etcd, MinIO — всегда; **Pulsar** (Zookeeper, BookKeeper) — текущий профиль (§4); **Kafka** (Zookeeper + broker) — после миграции (§4.1). В kind чаще `local-path`; в проде — [values-mvp-production.yaml](values-mvp-production.yaml) / [values-isolated-template.yaml](values/values-isolated-template.yaml).
 - **Образы:** в репозитории — **Dockerfile** в [`images/`](images/README.md); в кластер попадают как `milvus-*-nonroot`, `attu-nonroot` и т.д. (см. [values-kind-localpath.yaml](values/values-kind-localpath.yaml)).
 
 ```mermaid
