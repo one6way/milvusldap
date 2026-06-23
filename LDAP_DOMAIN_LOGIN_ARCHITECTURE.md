@@ -161,7 +161,7 @@ Port-forward **Attu** как раньше; в форме подключения:
 
 | Режим | Milvus address в Attu | Пароль |
 |-------|----------------------|--------|
-| Без gateway (lab) | `milvus:19530` | `AttuTest1` (sync) |
+| Без gateway (lab) | `milvus:19530` | `**********` (sync) |
 | С LDAP gateway (prod) | `milvus-ldap-gateway:19530` | доменный |
 
 Оба режима можно держать параллельно: прямой `milvus` — только для break-glass `root` из внутренней сети (NetworkPolicy).

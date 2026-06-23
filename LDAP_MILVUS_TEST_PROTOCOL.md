@@ -8,6 +8,8 @@
 | **Версия Milvus** | 2.5.0 (`milvus-nonroot:2.5.0`) |
 | **Исполнитель** | автоматизированный прогон + ручная верификация |
 
+> **Пароли lab** в документе заменены на `**********`. Фактические значения — в `manifests/ldap-lab/` и `*.lab.yaml` (только для kind-стенда).
+
 ---
 
 ## 1. Объект тестирования
@@ -60,7 +62,7 @@ MILVUS_SUPER_USERS: root,admin
 
 Секреты (`Secret/milvus-ldap-sync`): `LDAP_BIND_PASSWORD`, `MILVUS_ROOT_PASSWORD`, `MILVUS_SYNC_DEFAULT_PASSWORD` — **не приводятся в протоколе** (хранятся в K8s Secret).
 
-Внутренний sync-пароль Milvus для lab-пользователей: `AttuTest1` (≥6 символов, требование Milvus API).
+Внутренний sync-пароль Milvus для lab-пользователей: `**********` (≥6 символов, требование Milvus API).
 
 ### 2.2. LDAP Auth Gateway (`ConfigMap/ldap-auth-extauthz-config`)
 
@@ -78,8 +80,8 @@ HTTP_PORT: "8080"
 
 | LDAP uid | LDAP-пароль | Группа | Роль Milvus |
 |----------|-------------|--------|-------------|
-| `testuser` | `Testldap1` | `g-milvus-read` | `reader` |
-| `milvus655` | `Ab12345678` | `g-milvus-read` | `reader` |
+| `testuser` | `**********` | `g-milvus-read` | `reader` |
+| `milvus655` | `**********` | `g-milvus-read` | `reader` |
 
 ### 2.4. Расписание sync
 
@@ -288,14 +290,14 @@ kubectl -n $NS wait --for=condition=Ready pod/test-runner --timeout=60s
 
 kubectl -n $NS exec test-runner -- python3 -c "
 from pymilvus import MilvusClient
-c=MilvusClient(uri='http://milvus-ldap-gateway:19530', token='testuser:Testldap1')
+c=MilvusClient(uri='http://milvus-ldap-gateway:19530', token='testuser:**********')
 print(c.list_databases())
 "
 
 kubectl -n $NS exec test-runner -- python3 -c "
 import urllib.request, base64, json
 req=urllib.request.Request('http://milvus-ldap-gateway:19530/api/v1/user/info')
-req.add_header('Authorization','Basic '+base64.b64encode(b'testuser:Testldap1').decode())
+req.add_header('Authorization','Basic '+base64.b64encode(b'testuser:**********').decode())
 print(json.loads(urllib.request.urlopen(req).read()))
 "
 

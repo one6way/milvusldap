@@ -17,10 +17,10 @@ ldapSync:
     port: "19530"
     rootUser: root
     # root password must match extraConfigFiles.user.yaml defaultRootPassword
-    rootPassword: "user"
+    rootPassword: "**********"
     superUsers: "root,admin"
     # Placeholder password for synced Milvus users (min 6 chars). Not AD password.
-    defaultUserPassword: "ChangeMeSync1"
+    defaultUserPassword: "**********"
 
   ldap:
     uri: "ldaps://{{ LDAP_HOST }}:636"

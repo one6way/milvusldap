@@ -200,7 +200,7 @@ extraConfigFiles:
     common:
       security:
         authorizationEnabled: true
-        defaultRootPassword: "user"
+        defaultRootPassword: "**********"
         superUsers: root,admin
     # Web UI «Slow Requests»: дефолт Milvus ~секунды — мелкие search не попадают. Для kind-демо порог 15 ms (после helm upgrade).
     proxy:

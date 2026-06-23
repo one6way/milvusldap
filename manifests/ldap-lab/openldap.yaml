@@ -25,7 +25,7 @@ spec:
             - name: LDAP_DOMAIN
               value: lab.local
             - name: LDAP_ADMIN_PASSWORD
-              value: admin
+              value: **********
             - name: LDAP_TLS
               value: "false"
           ports:
@@ -72,14 +72,14 @@ data:
     cn: testuser
     sn: Testuser
     uid: testuser
-    userPassword: Testldap1
+    userPassword: **********
 
     dn: cn=milvus655,ou=users,dc=lab,dc=local
     objectClass: inetOrgPerson
     cn: milvus655
     sn: Milvus655
     uid: milvus655
-    userPassword: Ab12345678
+    userPassword: **********
 
     dn: cn=g-milvus-read,ou=groups,dc=lab,dc=local
     objectClass: groupOfNames
@@ -106,10 +106,10 @@ spec:
             - -ec
             - |
               for i in $(seq 1 60); do
-                ldapsearch -x -H ldap://openldap-lab:389 -b dc=lab,dc=local -D "cn=admin,dc=lab,dc=local" -w admin '(objectClass=*)' dn >/dev/null 2>&1 && break
+                ldapsearch -x -H ldap://openldap-lab:389 -b dc=lab,dc=local -D "cn=admin,dc=lab,dc=local" -w ********** '(objectClass=*)' dn >/dev/null 2>&1 && break
                 sleep 2
               done
-              ldapadd -x -H ldap://openldap-lab:389 -D "cn=admin,dc=lab,dc=local" -w admin -f /seed/seed.ldif
+              ldapadd -x -H ldap://openldap-lab:389 -D "cn=admin,dc=lab,dc=local" -w ********** -f /seed/seed.ldif
               echo "LDAP seed OK"
           volumeMounts:
             - name: seed

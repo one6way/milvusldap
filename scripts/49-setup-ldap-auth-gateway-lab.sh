@@ -29,7 +29,7 @@ kubectl -n "$NAMESPACE" run ldap-gw-smoke --rm -i --restart=Never \
   --image=milvus-ldap-sync:2.5.0-lab --image-pull-policy=IfNotPresent \
   --command -- python - <<'PY'
 from pymilvus import MilvusClient
-c = MilvusClient(uri="http://milvus-ldap-gateway:19530", token="testuser:Testldap1")
+c = MilvusClient(uri="http://milvus-ldap-gateway:19530", token="testuser:**********")
 print("gateway OK:", c.list_databases())
 PY
 
@@ -40,7 +40,7 @@ cat <<EOF
   http://127.0.0.1:3000
     Milvus address: milvus-ldap-gateway:19530
     Username:       testuser
-    Password:       Testldap1   (LDAP password, NOT AttuTest1)
+    Password:       **********   (LDAP password, NOT **********)
 
-  milvus655 / Ab12345678 — same pattern.
+  milvus655 / ********** — same pattern.
 EOF

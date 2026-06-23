@@ -11,7 +11,7 @@ objectClass: inetOrgPerson
 cn: testuser
 sn: Testuser
 uid: testuser
-userPassword: Testldap1
+userPassword: **********
 
 dn: cn=g-milvus-read,ou=groups,dc=lab,dc=local
 objectClass: groupOfNames

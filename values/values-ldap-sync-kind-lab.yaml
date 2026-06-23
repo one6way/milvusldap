@@ -13,9 +13,9 @@ ldapSync:
     host: milvus
     port: "19530"
     rootUser: root
-    rootPassword: "user"
+    rootPassword: "**********"
     superUsers: "root,admin"
-    defaultUserPassword: "AttuTest1"
+    defaultUserPassword: "**********"
 
   ldap:
     uri: "ldap://openldap-lab:389"

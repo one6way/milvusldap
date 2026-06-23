@@ -31,10 +31,10 @@ kubectl -n "$NAMESPACE" run milvus-verify-testuser --rm -i --restart=Never \
   --env MILVUS_PORT=19530 \
   --command -- bash -c "pip install -q pymilvus==2.5.0 && python - <<'PY'
 from pymilvus import MilvusClient
-c = MilvusClient(uri='http://milvus:19530', token='root:user')
+c = MilvusClient(uri='http://milvus:19530', token='root:**********')
 print('users:', c.list_users())
 print('testuser:', c.describe_user(user_name='testuser'))
-c2 = MilvusClient(uri='http://milvus:19530', token='testuser:AttuTest1')
+c2 = MilvusClient(uri='http://milvus:19530', token='testuser:**********')
 print('testuser login: OK')
 PY"
 
@@ -45,7 +45,7 @@ echo "Terminal 2: kubectl port-forward -n ${NAMESPACE} svc/milvus 19530:19530   
 echo "Open http://127.0.0.1:3000"
 echo "  Milvus address: milvus:19530"
 echo "  Username:       testuser"
-echo "  Password:       AttuTest1"
+echo "  Password:       **********"
 echo ""
-echo "LDAP lab user (bind only, not Attu password): uid=testuser / Testldap1"
-echo "LDAP admin: cn=admin,dc=lab,dc=local / admin"
+echo "LDAP lab user (bind only, not Attu password): uid=testuser / **********"
+echo "LDAP admin: cn=admin,dc=lab,dc=local / **********"

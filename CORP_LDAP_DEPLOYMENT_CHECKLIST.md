@@ -71,18 +71,18 @@ LDAP -> Milvus sync OK
 
 | Тест | Результат |
 |------|-----------|
-| `milvus-ldap-gateway` + `testuser` / `Testldap1` (LDAP) | OK `['default']` |
-| `milvus-ldap-gateway` + `milvus655` / `Ab12345678` | OK |
+| `milvus-ldap-gateway` + `testuser` / `**********` (LDAP) | OK `['default']` |
+| `milvus-ldap-gateway` + `milvus655` / `**********` | OK |
 | `milvus-ldap-gateway` + неверный пароль | Отклонено |
-| `milvus:19530` + `testuser` / `AttuTest1` (прямой путь) | OK (break-glass / старый режим) |
+| `milvus:19530` + `testuser` / `**********` (прямой путь) | OK (break-glass / старый режим) |
 | Attu + `milvus-ldap-gateway:19530` + LDAP-пароль | OK (вручную) |
 
 ### 3.3 Lab-учётки
 
 | User | LDAP password | Milvus internal (скрыт) |
 |------|---------------|-------------------------|
-| testuser | Testldap1 | AttuTest1 |
-| milvus655 | Ab12345678 | AttuTest1 |
+| testuser | ********** | ********** |
+| milvus655 | ********** | ********** |
 
 ---
 
@@ -102,7 +102,7 @@ kubectl port-forward -n milvus svc/attu 3000:3000
 # http://127.0.0.1:3000
 #   Milvus: milvus-ldap-gateway:19530
 #   User:   testuser
-#   Pass:   Testldap1
+#   Pass:   **********
 ```
 
 Ручной smoke:
@@ -112,7 +112,7 @@ kubectl -n milvus run gw-test --rm -i --restart=Never \
   --image=milvus-ldap-sync:2.5.0-lab --image-pull-policy=IfNotPresent \
   --command -- python - <<'PY'
 from pymilvus import MilvusClient
-c = MilvusClient(uri="http://milvus-ldap-gateway:19530", token="testuser:Testldap1")
+c = MilvusClient(uri="http://milvus-ldap-gateway:19530", token="testuser:**********")
 print(c.list_databases())
 PY
 ```

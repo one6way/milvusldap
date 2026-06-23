@@ -187,7 +187,7 @@ ldapSync:
     rootUser: root
     rootPassword: "..."   # = defaultRootPassword Milvus
     superUsers: "root,admin"
-    defaultUserPassword: "ChangeMeSync1"   # пароль для ВСЕХ sync-пользователей в Milvus/Attu
+    defaultUserPassword: "**********"   # пароль для ВСЕХ sync-пользователей в Milvus/Attu
 
   ldap:
     uri: "ldaps://ldap.corp.local:636"
@@ -342,8 +342,8 @@ kubectl port-forward -n milvus svc/attu 3000:3000
 
 | User | LDAP password | Milvus / Attu password |
 |------|---------------|------------------------|
-| `testuser` | `Testldap1` | `AttuTest1` |
-| `milvus655` | `Ab12345678` | `AttuTest1` |
+| `testuser` | `**********` | `**********` |
+| `milvus655` | `**********` | `**********` |
 | `root` | — | `user` |
 
 ---
