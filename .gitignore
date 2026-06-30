@@ -12,6 +12,9 @@ artifacts/
 images/export/
 images/ispravleno/
 images/init-base-nonroot/wheels/
+docker/milvus-ldap-sync/wheels-alpine/
+docker/ldap-auth-extauthz/wheels-alpine/
+artifacts/ldap-alpine-wheels.tar.gz
 
 # Локальные бандлы всего стека
 milvus-delivery-bundle*.tar.gz

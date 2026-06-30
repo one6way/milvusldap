@@ -1,0 +1,25 @@
+# Alpine / musl. Offline: wheels-alpine/ из scripts/57a-download-ldap-alpine-wheels.sh
+ARG BASE_IMAGE=python:3.11-alpine
+FROM ${BASE_IMAGE}
+
+ARG RUNTIME_UID=65000
+ARG RUNTIME_GID=65000
+
+COPY docker/ldap-auth-extauthz/requirements.txt /tmp/requirements.txt
+COPY docker/ldap-auth-extauthz/wheels-alpine /wheels
+
+RUN pip install --no-cache-dir --no-index --find-links=/wheels -r /tmp/requirements.txt \
+    && python -c "import ldap3; print('deps OK', ldap3.__version__)"
+
+RUN set -eux; \
+    addgroup -g "${RUNTIME_GID}" milvus 2>/dev/null || true; \
+    adduser -D -u "${RUNTIME_UID}" -G milvus -H -s /sbin/nologin milvus 2>/dev/null || true; \
+    mkdir -p /app; \
+    chown -R "${RUNTIME_UID}:${RUNTIME_GID}" /app
+
+WORKDIR /app
+COPY --chown=${RUNTIME_UID}:${RUNTIME_GID} scripts/ldap_auth_extauthz.py /app/ldap_auth_extauthz.py
+
+EXPOSE 8080
+USER ${RUNTIME_UID}:${RUNTIME_GID}
+ENTRYPOINT ["python", "/app/ldap_auth_extauthz.py"]
